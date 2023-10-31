@@ -56,7 +56,7 @@ class ColorController extends Controller
      * Display a listing of the resource.
      *
      * Método: index
-     * Ruta asociada: GET /colors
+     * Ruta asociada: GET /colores
      * Descripción: Este método muestra una lista de recursos (en este caso, colores).
      */
     public function index()
@@ -70,9 +70,8 @@ class ColorController extends Controller
      * Show the form for creating a new resource.
      *
      * Método: create
-     * Ruta asociada: GET /colors/create
-     * Descripción: Este método muestra el formulario para crear un nuevo recurso (color).
-     */
+     * Ruta asociada: POST /colores
+    */
     
     public function store(Request $request)
     {
@@ -118,7 +117,7 @@ class ColorController extends Controller
      * Update the specified resource in storage.
      *
      * Método: update
-     * Ruta asociada: PUT/PATCH /colors/{id}
+     * Ruta asociada: PUT/PATCH /colores/{id}
      * Descripción: Este método actualiza un recurso (color) específico identificado por su ID en el almacenamiento.
      */
     public function update(Request $request, string $id)
@@ -151,7 +150,7 @@ class ColorController extends Controller
      * Remove the specified resource from storage.
      *
      * Método: destroy
-     * Ruta asociada: DELETE /colors/{id}
+     * Ruta asociada: DELETE /colores/{id}
      * Descripción: Este método elimina un recurso (color) específico identificado por su ID del almacenamiento.
      */
     public function destroy(string $id)
@@ -308,12 +307,12 @@ Estos son solo ejemplos de algunas reglas de validación comunes en Laravel. Pue
 
 
 ### 📇TiposController
-Para crear un controlador teclee el siguiente comando en su terminal:
+Para el controlador teclee el siguiente comando en su terminal:
 
 ```bash
-php artisan make:controller Api/V1/TiposController
+php artisan make:controller Api/V1/TipoController
 ```
-Diríjase a la carpeta **App\Http\Controllers\Api\V1** y edite el archivo TiposController.
+Diríjase a la carpeta **App\Http\Controllers\Api\V1** y edite el archivo TipoController.
 
 Seguidamente comentaremos paso a paso los para crear el controlador:
 
@@ -336,27 +335,20 @@ class TipoController extends Controller
      * Display a listing of the resource.
      *
      * Método: index
-     * Ruta asociada: GET /colors
-     * Descripción: Este método muestra una lista de recursos (en este caso, colores).
+     * Ruta asociada: GET /tipos
+     * Descripción: Este método muestra una lista de recursos (en este caso, tipoes).
      */
     public function index()
     {
-        // Recuperar todos los colores desde la base de datos y retornarlos como una respuesta JSON
+        // Recuperar todos los tipoes desde la base de datos y retornarlos como una respuesta JSON
         $tipos = Tipo::all();
         return response()->json(['tipos' => $tipos]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * Método: create
-     * Ruta asociada: GET /colors/create
-     * Descripción: Este método muestra el formulario para crear un nuevo recurso (color).
-     */
     
     public function store(Request $request)
     {
-        // Validación de los datos del nuevo color (por ejemplo, nombre, código de color).
+        // Validación de los datos del nuevo tipo (por ejemplo, nombre, código de tipo).
         $validator = Validator::make($request->all(), [
             'nombre' => 'required|string|max:150|unique:tipos'
         ]);
@@ -369,20 +361,20 @@ class TipoController extends Controller
         //utilizar inserción masiva
         $tipo=Tipo::create($request->all());
        
-        // Retornar una respuesta JSON que confirma la creación exitosa del color.
-        return response()->json(['message' => 'Tipo creado con éxito', 'color' => $tipo]);
+        // Retornar una respuesta JSON que confirma la creación exitosa del tipo.
+        return response()->json(['message' => 'Tipo creado con éxito', 'tipo' => $tipo]);
     }
 
     /**
      * Display the specified resource.
      *
      * Método: show
-     * Ruta asociada: GET /colors/{id}
-     * Descripción: Este método muestra un recurso (color) específico identificado por su ID.
+     * Ruta asociada: GET /tipos/{id}
+     * Descripción: Este método muestra un recurso (tipo) específico identificado por su ID.
      */
     public function show(string $id)
     {
-        // Buscar el color por su ID en la base de datos y retornarlo como una respuesta JSON.
+        // Buscar el tipo por su ID en la base de datos y retornarlo como una respuesta JSON.
         $tipo = Tipo::find($id);
 
         if (!$tipo) {
@@ -398,14 +390,14 @@ class TipoController extends Controller
      * Update the specified resource in storage.
      *
      * Método: update
-     * Ruta asociada: PUT/PATCH /colors/{id}
-     * Descripción: Este método actualiza un recurso (color) específico identificado por su ID en el almacenamiento.
+     * Ruta asociada: PUT/PATCH /tipos/{id}
+     * Descripción: Este método actualiza un recurso (tipo) específico identificado por su ID en el almacenamiento.
      */
     public function update(Request $request, string $id)
     {
-        // Validación de los datos actualizados del color.
+        // Validación de los datos actualizados del tipo.
         $validator = Validator::make([
-            'nombre' => 'required|string|max:150|unique:colores'
+            'nombre' => 'required|string|max:150|unique:tipoes'
         ]);
 
         if($validator->fails()){
@@ -413,40 +405,40 @@ class TipoController extends Controller
         }
         
 
-        // Buscar el color por su ID en la base de datos.
+        // Buscar el tipo por su ID en la base de datos.
         $tipo = Tipo::find($id);
 
         if (!$tipo) {
-            return response()->json(['message' => 'Color no encontrado'], 404);
+            return response()->json(['message' => 'tipo no encontrado'], 404);
         }
 
-        // Actualizar los datos del color con los datos validados.
+        // Actualizar los datos del tipo con los datos validados.
         $tipo->update($tipo);
 
-        // Retornar una respuesta JSON que confirma la actualización exitosa del color.
-        return response()->json(['message' => 'Tipo actualizado con éxito', 'color' => $tipo]);
+        // Retornar una respuesta JSON que confirma la actualización exitosa del tipo.
+        return response()->json(['message' => 'Tipo actualizado con éxito', 'tipo' => $tipo]);
     }
 
     /**
      * Remove the specified resource from storage.
      *
      * Método: destroy
-     * Ruta asociada: DELETE /colors/{id}
-     * Descripción: Este método elimina un recurso (color) específico identificado por su ID del almacenamiento.
+     * Ruta asociada: DELETE /tipos/{id}
+     * Descripción: Este método elimina un recurso (tipo) específico identificado por su ID del almacenamiento.
      */
     public function destroy(string $id)
     {
-        // Buscar el color por su ID en la base de datos.
+        // Buscar el tipo por su ID en la base de datos.
         $tipo = Tipo::find($id);
 
         if (!$tipo) {
             return response()->json(['message' => 'Tipo no encontrado'], 404);
         }
 
-        // Eliminar el color de la base de datos.
+        // Eliminar el tipo de la base de datos.
         $tipo->delete();
 
-        // Retornar una respuesta JSON que confirma la eliminación exitosa del color.
+        // Retornar una respuesta JSON que confirma la eliminación exitosa del tipo.
         return response()->json(['message' => 'Tipo eliminado con éxito']);
     }
 }
