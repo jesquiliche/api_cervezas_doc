@@ -28,7 +28,7 @@ Ejecute el siguiente comando para descargar la última versión de Laravel:
 Nuestro proyecto se llamara api_comercio, sustituir nombre de proyecto por api_comercio.
 :::
 ```bash title="Instalación local"
-composer create-project --prefer-dist laravel/laravel nombre_de_proyecto "9.*"
+composer create-project --prefer-dist laravel/laravel nombre_de_proyecto "10.*"
 ```
 ```bash title="Instalación global"
 composer global require laravel/installer
@@ -77,3 +77,42 @@ La estructura de un proyecto Laravel se divide en varias carpetas principales, q
 - **.gitignore**: Contiene una lista de archivos que deben ser ignorados por Git.
 
 Esta es una descripción general de la estructura de un proyecto Laravel. Cada proyecto puede tener una estructura ligeramente diferente según las necesidades específicas de cada aplicación.
+
+### Configuración de idioma
+
+Los mensajes de validación de Laravel pueden ser traducidos a varios idiomas entre ellos el Español.  En la versión actual de Laravel 10 por defecto no viene el directorio **“/lang”**, para poder personalizar los idiomas en Laravel como el Español por ejemplo. Vamos a ver como llevar esta tarea a cabo. 
+
+- Desde su terminal teclee y ejecute el siguiente comando:
+
+```bash
+php artisan lang:publish
+```
+
+- Instalar el paquete de Laravel Lang.
+Laravel Lang es un paquete de Laravel para instalar paquetes de idiomas en nuestra aplicación. Para instalar laravel Lang ejecutamos el siguiente comando:
+
+```bash
+composer require laravel-lang/common --dev
+```
+
+- Una vez instalado el paquete de Laravel Lang añadimos el idioma español con el siguiente comando:
+
+```bash
+php artisan lang:add es
+```
+
+- Por último, actualizamos el paquete de Laravel Lang.
+
+```bash
+php artisan lang:update
+```
+
+### Cambiar la configuración del idioma
+
+Lo último, es cambiar la configuración del idioma del nuestro proyecto, abrimos el archivo “app.php” en el directorio “/config” y cambiamos la siguiente linea de código a “es”.
+
+```js
+'locale' => 'es',
+```
+
+Una vez realizado este proceso ya dispondremos de Laravel traducido al eapañol.

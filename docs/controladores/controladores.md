@@ -56,7 +56,7 @@ class ColorController extends Controller
      * Display a listing of the resource.
      *
      * Método: index
-     * Ruta asociada: GET /colores
+     * Ruta asociada: GET /colors
      * Descripción: Este método muestra una lista de recursos (en este caso, colores).
      */
     public function index()
@@ -70,8 +70,9 @@ class ColorController extends Controller
      * Show the form for creating a new resource.
      *
      * Método: create
-     * Ruta asociada: POST /colores
-    */
+     * Ruta asociada: GET /colors/create
+     * Descripción: Este método muestra el formulario para crear un nuevo recurso (color).
+     */
     
     public function store(Request $request)
     {
@@ -86,6 +87,7 @@ class ColorController extends Controller
 
         //Debe estar configurado fillable en el modelo para 
         //utilizar inserción masiva
+        
         $color=Color::create($request->all());
        
         // Retornar una respuesta JSON que confirma la creación exitosa del color.
@@ -109,7 +111,7 @@ class ColorController extends Controller
         }
 
 
-        return response()->json(['color' => $color]);
+        return response()->json(['color' => $color],201);
     }
 
     
@@ -117,13 +119,13 @@ class ColorController extends Controller
      * Update the specified resource in storage.
      *
      * Método: update
-     * Ruta asociada: PUT/PATCH /colores/{id}
+     * Ruta asociada: PUT/PATCH /colors/{id}
      * Descripción: Este método actualiza un recurso (color) específico identificado por su ID en el almacenamiento.
      */
     public function update(Request $request, string $id)
     {
         // Validación de los datos actualizados del color.
-        $validator = Validator::make([
+        $validator = Validator::make($request->all(),[
             'nombre' => 'required|string|max:255|unique:colores'
         ]);
 
@@ -140,7 +142,7 @@ class ColorController extends Controller
         }
 
         // Actualizar los datos del color con los datos validados.
-        $color->update($validator);
+        $color->update($request->all());
 
         // Retornar una respuesta JSON que confirma la actualización exitosa del color.
         return response()->json(['message' => 'Color actualizado con éxito', 'color' => $color]);
@@ -150,7 +152,7 @@ class ColorController extends Controller
      * Remove the specified resource from storage.
      *
      * Método: destroy
-     * Ruta asociada: DELETE /colores/{id}
+     * Ruta asociada: DELETE /colors/{id}
      * Descripción: Este método elimina un recurso (color) específico identificado por su ID del almacenamiento.
      */
     public function destroy(string $id)
@@ -306,7 +308,7 @@ Estos son solo ejemplos de algunas reglas de validación comunes en Laravel. Pue
 :::
 
 
-### 📇TiposController
+### 📇TipoController
 Para el controlador teclee el siguiente comando en su terminal:
 
 ```bash
@@ -440,6 +442,287 @@ class TipoController extends Controller
 
         // Retornar una respuesta JSON que confirma la eliminación exitosa del tipo.
         return response()->json(['message' => 'Tipo eliminado con éxito']);
+    }
+}
+```
+
+### 📇PaisController
+Para crear el controlador teclee el siguiente comando en su terminal:
+
+```bash
+php artisan make:controller Api/V1/PaisController --resource
+```
+Diríjase a la carpeta **App\Http\Controllers\Api\V1** y edite el archivo TipoController.
+
+Seguidamente comentaremos paso a paso los para crear el controlador:
+
+1. De momento teclee el siguiente código
+
+```js
+<?php
+
+namespace App\Http\Controllers\Api\V1;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Models\Pais;
+use Illuminate\Support\Facades\Validator;
+
+class PaisController extends Controller
+{
+       /**
+     * Display a listing of the resource.
+     *
+     * Método: index
+     * Ruta asociada: GET /paises
+     * Descripción: Este método muestra una lista de recursos (en este caso, paises).
+     */
+    public function index()
+    {
+        // Recuperar todos los paises desde la base de datos y retornarlos como una respuesta JSON
+        $paises = Pais::all();
+        return response()->json(['paises' => $paises]);
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * Método: create
+     * Ruta asociada: POST /paises
+     * Descripción: Este método muestra el formulario para crear un nuevo recurso (pais).
+     */
+    
+    public function store(Request $request)
+    {
+        // Validación de los datos del nuevo pais (por ejemplo, nombre, código de pais).
+        $validator = Validator::make($request->all(), [
+            'nombre' => 'required|string|max:255|unique:paises'
+        ]);
+        
+        if($validator->fails()){
+            return response()->json($validator->errors(),422); 
+        }
+
+        //Debe estar configurado fillable en el modelo para 
+        //utilizar inserción masiva
+        $tipo=Pais::create($request->all());
+       
+        // Retornar una respuesta JSON que confirma la creación exitosa del pais.
+        return response()->json(['message' => 'País creado con éxito', 'pais' => $tipo]);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * Método: show
+     * Ruta asociada: GET /paiss/{id}
+     * Descripción: Este método muestra un recurso (pais) específico identificado por su ID.
+     */
+    public function show(string $id)
+    {
+        // Buscar el pais por su ID en la base de datos y retornarlo como una respuesta JSON.
+        $pais = Pais::find($id);
+
+        if (!$pais) {
+            return response()->json(['message' => 'país no encontrado'], 404);
+        }
+
+        return response()->json(['País' => $pais]);
+    }
+
+    
+    /**
+     * Update the specified resource in storage.
+     *
+     * Método: update
+     * Ruta asociada: PUT/PATCH /itposs/{id}
+     * Descripción: Este método actualiza un recurso (pais) específico identificado por su ID en el almacenamiento.
+     */
+    public function update(Request $request, string $id)
+    {
+        // Validación de los datos actualizados del tipo.
+        $validator = Validator::make([
+            'nombre' => 'required|string|max:255'
+        ]);
+
+        if($validator->fails()){
+            return response()->json($validator->errors(),422); 
+        }
+        
+
+        // Buscar el pais por su ID en la base de datos.
+        $pais = Pais::find($id);
+
+        if (!$pais) {
+            return response()->json(['message' => 'Pais no encontrado'], 404);
+        }
+
+        // Actualizar los datos del pais con los datos validados.
+        $pais->update($pais);
+
+        // Retornar una respuesta JSON que confirma la actualización exitosa del pais.
+        return response()->json(['message' => 'País actualizado con éxito', 'pais' => $pais]);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * Método: destroy
+     * Ruta asociada: DELETE /paises/{id}
+     * Descripción: Este método elimina un recurso (pais) específico identificado por su ID del almacenamiento.
+     */
+    public function destroy(string $id)
+    {
+        // Buscar el pais por su ID en la base de datos.
+        $pais = Pais::find($id);
+
+        if (!$pais) {
+            return response()->json(['message' => 'País no encontrado'], 404);
+        }
+
+        // Eliminar el pais de la base de datos.
+        $pais->delete();
+
+        // Retornar una respuesta JSON que confirma la eliminación exitosa del tipo.
+        return response()->json(['message' => 'País eliminado con éxito']);
+    }//
+}
+```
+
+### 📇GraduacionController
+Para crear el controlador teclee el siguiente comando en su terminal:
+
+```bash
+php artisan make:controller Api/V1/GraduacionController --resource
+```
+Diríjase a la carpeta **App\Http\Controllers\Api\V1** y edite el archivo TipoController.
+
+Seguidamente comentaremos pasos para crear el controlador:
+
+1. De momento teclee el siguiente código
+
+```js
+<?php
+
+namespace App\Http\Controllers\Api\V1;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Models\Graduacion;
+use Illuminate\Support\Facades\Validator;
+
+
+class GraduacionController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * Método: index
+     * Ruta asociada: GET /tipos
+     * Descripción: Este método muestra una lista de recursos (en este caso, tipoes).
+     */
+    public function index()
+    {
+        // Recuperar todos los tipoes desde la base de datos y retornarlos como una respuesta JSON
+        $graduaciones = Graduacion::all();
+        return response()->json(['graduaciones' => $graduaciones]);
+    }
+
+    
+    public function store(Request $request)
+    {
+        // Validación de los datos del nuevo tipo (por ejemplo, nombre, código de tipo).
+        $validator = Validator::make($request->all(), [
+            'nombre' => 'required|string|max:150|unique:tipos'
+        ]);
+        
+        if($validator->fails()){
+            return response()->json($validator->errors(),422); 
+        }
+
+        //Debe estar configurado fillable en el modelo para 
+        //utilizar inserción masiva
+        $graduacion=Graduacion::create($request->all());
+       
+        // Retornar una respuesta JSON que confirma la creación exitosa del tipo.
+        return response()->json(['message' => 'Graduación creado con éxito', 'graduacion' => $graduacion]);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * Método: show
+     * Ruta asociada: GET /tipos/{id}
+     * Descripción: Este método muestra un recurso (tipo) específico identificado por su ID.
+     */
+    public function show(string $id)
+    {
+        // Buscar el tipo por su ID en la base de datos y retornarlo como una respuesta JSON.
+        $graduacion = Graduacion::find($id);
+
+        if (!$graduacion) {
+            return response()->json(['message' => 'Graduación no encontrado'], 404);
+        }
+
+
+        return response()->json(['Tipo' => $graduacion]);
+    }
+
+    
+    /**
+     * Update the specified resource in storage.
+     *
+     * Método: update
+     * Ruta asociada: PUT/PATCH /itposs/{id}
+     * Descripción: Este método actualiza un recurso (tipo) específico identificado por su ID en el almacenamiento.
+     */
+    public function update(Request $request, string $id)
+    {
+        // Validación de los datos actualizados del tipo.
+        $validator = Validator::make([
+            'nombre' => 'required|string|max:150|unique:tipoes'
+        ]);
+
+        if($validator->fails()){
+            return response()->json($validator->errors(),422); 
+        }
+        
+
+        // Buscar el tipo por su ID en la base de datos.
+        $graduacion = Graduacion::find($id);
+
+        if (!$graduacion) {
+            return response()->json(['message' => 'graduación no encontrada'], 404);
+        }
+
+        // Actualizar los datos del tipo con los datos validados.
+        $graduacion->update($graduacion);
+
+        // Retornar una respuesta JSON que confirma la actualización exitosa del tipo.
+        return response()->json(['message' => 'Graduación actualizado con éxito', 'graduacion' => $graduacion]);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * Método: destroy
+     * Ruta asociada: DELETE /tipos/{id}
+     * Descripción: Este método elimina un recurso (tipo) específico identificado por su ID del almacenamiento.
+     */
+    public function destroy(string $id)
+    {
+        // Buscar el tipo por su ID en la base de datos.
+        $graduacion = Graduacion::find($id);
+
+        if (!$graduacion) {
+            return response()->json(['message' => 'Graduación no encontrada'], 404);
+        }
+
+        // Eliminar el tipo de la base de datos.
+        $graduacion->delete();
+
+        // Retornar una respuesta JSON que confirma la eliminación exitosa del tipo.
+        return response()->json(['message' => 'Graduación eliminado con éxito']);
     }
 }
 ```

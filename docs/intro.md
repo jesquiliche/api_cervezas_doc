@@ -2,8 +2,6 @@
 sidebar_position: 1
 ---
 # Introducción a las APIs
-![Mi imagen](/assets/images/api_rest.png)
-
 
 ## ¿Qué son las APIs?
 

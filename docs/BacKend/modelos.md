@@ -175,8 +175,87 @@ Por defecto, Eloquent buscará una tabla intermedia con nombres en plural en ord
 ```js
 return $this->belongsToMany(Role::class, 'user_roles');
 ```
-
 :::
+
+:::tip Uno a muchos polimórfica
+
+Para establecer una relación uno a muchos polimórfica, debes utilizar los métodos `morphTo()` y `morphMany()` en tus modelos. El método `morphTo()` se utiliza en el modelo que puede tener varias relaciones "uno a muchos", mientras que el método `morphMany()` se utiliza en los modelos que pueden tener una relación "muchos a uno".
+
+Por ejemplo, supongamos que tienes un modelo `Comment` y varios modelos diferentes que pueden ser comentados, como `Post` y `Video`. Para establecer una relación uno a muchos polimórfica, puedes agregar el siguiente método `comments()` al modelo `Post` y al modelo `Video`:
+
+```
+public function comments()
+{
+    return $this->morphMany('App\Models\Comment', 'commentable');
+}
+```
+
+Este método indica que el modelo `Post` o `Video` puede tener muchos comentarios a través de la relación `commentable`.
+
+A continuación, en el modelo `Comment`, debes agregar el siguiente método `commentable()` para establecer la relación inversa:
+
+```
+public function commentable()
+{
+    return $this->morphTo();
+}
+```
+
+Este método indica que el modelo `Comment` puede pertenecer a cualquier modelo que tenga una relación "uno a muchos" polimórfica a través del campo `commentable_id` y `commentable_type`.
+
+Ahora puedes acceder a los comentarios de un `Post` o un `Video` utilizando el método `comments()` y puedes acceder al modelo al que pertenece un comentario utilizando el método `commentable()`. Por ejemplo:
+
+```
+$post = Post::find(1);
+$comments = $post->comments; // Obtener todos los comentarios del post
+$comment = Comment::find(1);
+$commentable = $comment->commentable; // Obtener el modelo (Post o Video) al que pertenece el comentario
+```
+
+La relación uno a muchos polimórfica en Eloquent permite que un modelo tenga varias relaciones "uno a muchos" con diferentes modelos, lo que puede ser útil para simplificar la estructura de la base de datos y hacer que el código sea más fácil de mantener.
+:::
+
+:::tip Muchos a muchos polimórfica
+
+En Eloquent, una relación muchos a muchos polimórfica te permite establecer una relación "muchos a muchos" entre varios modelos diferentes a través de una única tabla de relación polimórfica. Esto es útil cuando tienes varias entidades diferentes que pueden tener muchas instancias de otra entidad y deseas evitar la creación de múltiples tablas de relación.
+
+Para establecer una relación muchos a muchos polimórfica, debes utilizar los métodos `morphToMany()` y `morphedByMany()` en tus modelos. El método `morphToMany()` se utiliza en el modelo que puede tener muchas instancias de otra entidad, mientras que el método `morphedByMany()` se utiliza en el modelo que puede ser utilizado por muchas instancias de otros modelos.
+
+Por ejemplo, supongamos que tienes un modelo `Tag` y varios modelos diferentes que pueden tener muchas etiquetas, como `Post` y `Video`. Para establecer una relación muchos a muchos polimórfica, puedes agregar el siguiente método `tags()` al modelo `Post` y al modelo `Video`:
+
+```
+public function tags()
+{
+    return $this->morphToMany('App\Models\Tag', 'taggable');
+}
+```
+
+Este método indica que el modelo `Post` o `Video` puede tener muchas etiquetas a través de la relación `taggable`.
+
+A continuación, en el modelo `Tag`, debes agregar el siguiente método `taggable()` para establecer la relación inversa:
+
+```
+public function taggable()
+{
+    return $this->morphedByMany('App\Models\Post', 'taggable');
+}
+```
+
+Este método indica que el modelo `Tag` puede pertenecer a cualquier modelo que tenga una relación muchos a muchos polimórfica a través de la tabla de relación `taggables` y la columna `taggable_id` y `taggable_type`.
+
+Ahora puedes acceder a las etiquetas de un `Post` o un `Video` utilizando el método `tags()` y puedes acceder a los modelos que tienen una etiqueta específica utilizando el método `taggable()`. Por ejemplo:
+
+```
+$post = Post::find(1);
+$tags = $post->tags; // Obtener todas las etiquetas del post
+$tag = Tag::find(1);
+$taggable = $tag->taggable; // Obtener todos los modelos (Post o Video) que tienen la etiqueta
+```
+
+En conclusión, la relación muchos a muchos polimórfica en Eloquent te permite establecer una relación "muchos a muchos" entre varios modelos diferentes a través de una única tabla de relación polimórfica, lo que puede ser útil para simplificar la estructura de la base de datos y hacer que el código sea más fácil de mantener.
+:::
+
+### Color
 
 A continuación, vamos a definir el modelo de la clase **Color** para la tabla **colores**. Si recuerdas, cuando estudiamos las migraciones, establecimos una relación entre la tabla **colores** y la tabla **cervezas**. En este caso, una cerveza puede tener un color, como por ejemplo, un tono tostado. Sin embargo, un color puede estar asociado a muchas cervezas de distintas marcas, tipos, etc. Esto constituye una ***relación de uno a muchos***. En la parte del 'uno', tenemos el modelo **Color**, y en la parte de 'muchos', tenemos el modelo **Cerveza**. A continuación, veremos cómo implementar esta relación en los modelos. Desde la terminal ejecute el siguiente comando:
 
@@ -197,6 +276,7 @@ use Illuminate\Database\Eloquent\Model;
 class Color extends Model
 {
     use HasFactory;
+    protected $fillable=['nombre'];
     protected $table='colores';
     
     public function cervezas()
@@ -209,13 +289,13 @@ Hay varios puntos a destacar en este código:
 
 1. Se utiliza el trait "HasFactory", que es una característica de Laravel para generar datos de prueba o sembrar la base de datos con registros falsos. Esto es útil en entornos de desarrollo y pruebas.
 
-2. La propiedad protegida **$table** se establece en 'colores', lo que indica que este modelo está asociado con la tabla de la base de datos llamada "colores". Laravel asume por defecto que el nombre de la tabla es el nombre del modelo en plural **(colors)** en ingles, pero puedes especificar manualmente el nombre de la tabla utilizando esta propiedad.
+2. La propiedad fillable en los modelos de Eloquent en Laravel es utilizada para especificar qué columnas de una tabla de base de datos se pueden asignar masivamente, es decir, cuáles columnas pueden ser llenadas con datos en una única operación de asignación masiva. Esta propiedad es una medida de seguridad para proteger contra asignaciones masivas no deseadas y potenciales vulnerabilidades de seguridad. Ahondaremos más en este tema cuando veamos los controladores.
 
-5. El método **cervezas()** es un método de relación definido en el modelo "Color". Este método establece una relación "uno a muchos" con el modelo "Cerveza". En otras palabras, un "Color" puede tener muchas "Cervezas", pero una "Cerveza" pertenece a un único "Color". Esto se define utilizando el método **hasMany()** de Eloquent.
+3. La propiedad protegida **$table** se establece en 'colores', lo que indica que este modelo está asociado con la tabla de la base de datos llamada "colores". Laravel asume por defecto que el nombre de la tabla es el nombre del modelo en plural **(colors)** en ingles, pero puedes especificar manualmente el nombre de la tabla utilizando esta propiedad.
+
+4. El método **cervezas()** es un método de relación definido en el modelo "Color". Este método establece una relación "uno a muchos" con el modelo "Cerveza". En otras palabras, un "Color" puede tener muchas "Cervezas", pero una "Cerveza" pertenece a un único "Color". Esto se define utilizando el método **hasMany()** de Eloquent.
 
 En resumen, este código define el modelo "Color" en Laravel y configura una relación "uno a muchos" entre los colores y las cervezas, lo que significa que un color puede estar asociado con varias cervezas en la base de datos. Esto es útil para representar relaciones complejas entre tablas en una base de datos relacional dentro de una aplicación Laravel.
-
-
 
 ## Tinker
 
@@ -349,9 +429,9 @@ class Tipo extends Model
     use HasFactory;
     protected $fillable=['nombre'];
    
-    public function tipos()
+    public function cervezas()
     {
-        return $this->hasMany(Tipo::class);
+        return $this->hasMany(Cerveza::class);
     }
 }
 ```
@@ -371,7 +451,7 @@ class Graduacion extends Model
     protected $table='graduaciones';
     protected $fillable=['nombre'];
    
-    public function graduaciones()
+    public function cervezas()
     {
         return $this->hasMany(Cervezas::class);
     }

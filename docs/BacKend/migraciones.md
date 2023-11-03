@@ -381,6 +381,82 @@ return new class extends Migration
     }
 };
 ```
+### Integridad referencial
+
+La integridad referencial es un concepto en las bases de datos que se refiere a la consistencia y precisión de las relaciones entre las tablas. Implica que las relaciones entre las tablas de la base de datos se mantengan de manera coherente y se respeten las restricciones definidas. La integridad referencial es importante por varias razones:
+
+1. **Consistencia de Datos**: Garantiza que los datos en la base de datos sean coherentes y precisos. Las relaciones entre las tablas reflejan relaciones en el mundo real, lo que ayuda a evitar inconsistencias y errores de datos.
+
+2. **Evita Datos Huérfanos**: Evita que queden registros huérfanos o sin relación cuando se eliminan o actualizan registros relacionados en otras tablas. Esto ayuda a mantener la integridad de la base de datos.
+
+3. **Mantiene la Integridad**: Asegura que las operaciones de eliminación o actualización en una tabla no generen resultados inesperados o incorrectos en las tablas relacionadas.
+
+4. **Mejora la Calidad de los Datos**: Contribuye a la calidad de los datos al garantizar que los datos sean precisos y relevantes para las relaciones en la base de datos.
+
+En este ejemplo de código, estamos utilizando migraciones de Laravel para definir la estructura de una tabla llamada "cervezas". En esta tabla, estás estableciendo relaciones de clave foránea con otras tablas, como "colores", "graduaciones", "tipos" y "paises". Esto es un ejemplo de cómo se implementa la integridad referencial en una base de datos.
+
+Cuando defines las relaciones de clave foránea en la tabla "cervezas", estás diciendo que el campo `color_id` debe hacer referencia al campo `id` en la tabla "colores", el campo `graduacion_id` debe hacer referencia al campo `id` en la tabla "graduaciones", y así sucesivamente. Esto garantiza que solo se puedan insertar valores en la tabla "cervezas" que tengan relaciones válidas con las otras tablas.
+
+Por ejemplo, si intentaras insertar una cerveza con un valor de `color_id` que no existe en la tabla "colores" (violando la integridad referencial), Laravel generaría un error y no permitiría la inserción. Esto es importante para mantener la coherencia y la precisión de los datos en la base de datos y garantizar que las relaciones entre las tablas se mantengan de manera correcta y consistente.
+
+:::tip Importante
+
+Cuando establecemos una relación entre dos tablas, debemos asegurarnos de que la clave foránea de la tabla y la tabla hija utilizan el mismo tipo de dato. Si esto no se cumple el motor de base de datos nos dara un error.
+
+```
+$table->unsignedBigInteger('color_id');
+$table->foreign('color_id')->references('id')->on('colores');
+```
+En este ejemplo establecemos que la clave foránea va ser un entero de 64 bits sin signo. Este es el tipo por defecto que establece Laravel para los campos tipo **id**.
+:::
+
+:::tip Tipos de restricciones para las claves foráneas
+Puedes aplicar varias restricciones a una clave foránea (FK) en Laravel utilizando el método `on` en la definición de la clave foránea. Algunas de las restricciones comunes que puedes aplicar incluyen:
+
+1. **ON DELETE CASCADE**: Esta restricción especifica que cuando se elimina el registro principal en la tabla padre, también se eliminarán automáticamente todos los registros secundarios relacionados en la tabla hija.
+
+   Ejemplo:
+   ```php
+   $table->foreign('color_id')->references('id')->on('colores')->onDelete('cascade');
+   ```
+
+2. **ON DELETE SET NULL**: Esta restricción establece el valor de la clave foránea en NULL cuando se elimina el registro principal en la tabla padre. Esto se utiliza cuando deseas permitir que los registros secundarios queden huérfanos.
+
+   Ejemplo:
+   ```php
+   $table->foreign('color_id')->references('id')->on('colores')->onDelete('set null');
+   ```
+
+3. **ON DELETE RESTRICT**: Esta restricción evita que se elimine el registro principal si existen registros secundarios relacionados en la tabla hija. Es la restricción predeterminada si no se especifica ninguna otra.
+
+   Ejemplo:
+   ```php
+   $table->foreign('color_id')->references('id')->on('colores')->onDelete('restrict');
+   ```
+
+4. **ON DELETE NO ACTION**: Similar a "RESTRICT", esta restricción evita que se elimine el registro principal si existen registros secundarios relacionados en la tabla hija.
+
+   Ejemplo:
+   ```php
+   $table->foreign('color_id')->references('id')->on('colores')->onDelete('no action');
+   ```
+
+5. **ON UPDATE CASCADE**: Esta restricción especifica que cuando se actualiza el valor de la clave primaria en la tabla padre, los valores de la clave foránea en la tabla hija también se actualizarán automáticamente.
+
+   Ejemplo:
+   ```php
+   $table->foreign('color_id')->references('id')->on('colores')->onUpdate('cascade');
+   ```
+
+6. **ON UPDATE SET NULL**: Esta restricción establece el valor de la clave foránea en NULL cuando se actualiza el valor de la clave primaria en la tabla padre.
+
+   Ejemplo:
+   ```php
+   $table->foreign('color_id')->references('id')->on('colores')->onUpdate('set null');
+   ```
+
+Estas restricciones te permiten definir cómo se deben manejar las operaciones de eliminación y actualización en las relaciones de clave foránea en Laravel para mantener la integridad referencial en la base de datos. Puedes elegir la restricción que mejor se adapte a tus necesidades según el comportamiento deseado en tu aplicación.
+:::
 
 ### 📇Modificando la tabla cervezas
 
@@ -409,9 +485,9 @@ class ModifyCervezasTable extends Migration
         Schema::table('cervezas', function (Blueprint $table) {
             $table->boolean('novedad')->default(false);
             $table->boolean('oferta')->default(false);
-            $table->decimal('precio', 8, 2); // 8 dígitos en total y 2 decimales
-            $table->string('foto');
-            $table->string('marca', 150);
+            $table->decimal('precio', 8, 2)->default(0); // 8 dígitos en total y 2 decimales
+            $table->string('foto')->default('');
+            $table->string('marca', 150)->default('');
         });
     }
 
@@ -431,4 +507,236 @@ A continuación vamos a ejecutar todas las migraciones pendientes:
 
 ```bash
 php artisan migrate
+```
+
+Después de ejecutar la migración de "Cervezas" deberemos adaptar el modelo a nuestra tabla añadiendo los campos que faltan. Edite el modelo **Cerveza** y modifique la propiedad fillable, introduciremos los campos que faltan:
+
+```js
+protected $fillable = [
+        'nombre',
+        'descripcion',
+        'color_id',
+        'graduacion_id',
+        'tipo_id',
+        'pais_id',
+        'novedad',
+        'oferta',
+        'precio', 
+        'foto',
+        'marca'
+    ];
+```
+
+## Utilizar SQL nativo
+
+### ¿Por qué utilizar SQL en nuestras migraciones?
+
+Utilizar SQL nativo en las migraciones de Laravel puede ser una elección apropiada en ciertas situaciones debido a las siguientes justificaciones:
+
+1. **Flexibilidad y Control Total**: Al escribir SQL nativo en las migraciones, tienes un control total sobre la ejecución de comandos SQL. Esto es fundamental cuando necesitas realizar tareas más avanzadas o específicas que no son directamente compatibles con las funciones proporcionadas por Laravel.
+
+2. **Compatibilidad con Características Específicas de la Base de Datos**: Cada sistema de gestión de bases de datos (DBMS) puede tener características específicas que no se pueden aprovechar completamente utilizando la sintaxis de Laravel. Utilizar SQL nativo te permite explotar las capacidades únicas de tu DBMS.
+
+3. **Optimización de Rendimiento**: En ocasiones, escribir SQL personalizado puede ser más eficiente en términos de rendimiento que utilizar métodos de alto nivel de Laravel. Esto es especialmente cierto cuando trabajas con bases de datos masivas o necesitas consultas altamente optimizadas.
+
+4. **Migraciones Heredadas o Externas**: Si migras una base de datos existente o trabajas con migraciones heredadas escritas en SQL, puede ser más sencillo y consistente seguir utilizando SQL nativo en lugar de traducir todo a sintaxis de Laravel.
+
+5. **Conversión Gradual**: A menudo, las migraciones pueden implicar una conversión gradual de una base de datos existente a un nuevo esquema. El uso de SQL nativo te permite realizar estas conversiones de manera más eficiente sin depender de las capacidades específicas de Laravel.
+
+6. **Mantenimiento de Código Existente**: Si estás trabajando en un proyecto heredado que ya utiliza SQL nativo en sus migraciones, mantener la consistencia y la integridad en el código existente puede ser una justificación válida para continuar utilizando esta práctica.
+
+7. **Depuración y Pruebas**: Utilizar SQL nativo puede simplificar la depuración y las pruebas de migraciones, ya que puedes ejecutar y probar directamente las consultas en tu sistema de gestión de bases de datos.
+
+Es importante mencionar que mientras SQL nativo puede ser útil en ciertos casos, Laravel ofrece un conjunto de herramientas sólidas para gestionar migraciones de base de datos a través de su sintaxis específica. La elección entre SQL nativo y las funciones de migración de Laravel depende del contexto y de los requisitos del proyecto. En muchos casos, una combinación de ambos enfoques puede ser la solución más adecuada.
+
+### Creación de vistas
+
+```js
+<?php
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Migrations\Migration;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        // Ejecuta la sentencia SQL para crear o reemplazar la vista
+        DB::statement('
+            CREATE OR REPLACE VIEW v_cervezas AS
+            SELECT 
+                cer.id AS id,
+                cer.nombre AS nombre,
+                cer.descripcion AS descripcion,
+                cer.color_id AS color_id,
+                cer.graduacion_id AS graduacion_id,
+                cer.tipo_id AS tipo_id,
+                cer.pais_id AS pais_id,
+                cer.created_at AS created_at,
+                cer.updated_at AS updated_at,
+                cer.novedad AS novedad,
+                cer.oferta AS oferta,
+                cer.precio AS precio,
+                cer.foto AS foto,
+                cer.marca AS marca,
+                col.nombre AS color,
+                g.nombre AS graduacion,
+                t.nombre AS tipo,
+                p.nombre AS pais
+            FROM
+                cervezas cer
+                JOIN colores col ON (cer.color_id = col.id)
+                JOIN graduaciones g ON (cer.graduacion_id = g.id)
+                JOIN tipos t ON (t.id = cer.tipo_id)
+                JOIN paises p ON (p.id = cer.pais_id)
+        ');
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        // Si deseas eliminar la vista en una migración de reversión, puedes hacerlo así:
+        DB::statement('DROP VIEW IF EXISTS v_cervezas');
+    }
+};
+```
+### Creación de triggers
+
+```js
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+
+class CreateTriggerCervezas extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up()
+    {
+        // Crear la tabla cervezas_copia
+        DB::unprepared('
+        CREATE TABLE cervezas_copia AS
+        SELECT *, "INSERT" AS operacion, NOW() AS fecha_operacion
+        FROM cervezas WHERE 1=0;
+    ');
+    
+
+
+        // Crear el trigger
+        DB::unprepared('
+            CREATE TRIGGER copiar_cervezas_after_update
+            AFTER UPDATE ON cervezas FOR EACH ROW
+            BEGIN
+                INSERT INTO cervezas_copia (id, nombre, descripcion, color_id, graduacion_id, tipo_id, pais_id, created_at, updated_at, operacion,fecha_operacion)
+                SELECT OLD.id, NEW.nombre, OLD.descripcion, OLD.color_id, OLD.graduacion_id, OLD.tipo_id, OLD.pais_id, OLD.created_at, OLD.updated_at, "UPDATE",NOW();
+            END;
+        ');
+    
+
+        DB::unprepared('
+            CREATE TRIGGER copiar_cervezas_before_delete
+            BEFORE DELETE ON cervezas FOR EACH ROW
+            BEGIN
+                INSERT INTO cervezas_copia (id, nombre, descripcion, color_id, graduacion_id, tipo_id, pais_id, created_at, updated_at, operacion,fecha_operacion)
+                SELECT OLD.id, OLD.nombre, OLD.descripcion, OLD.color_id, OLD.graduacion_id, OLD.tipo_id, OLD.pais_id, OLD.created_at, NOW(), "DELETE",NOW();
+            END;
+        ');
+    
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down()
+    {
+        // Eliminar los triggers
+        DB::unprepared('DROP TRIGGER IF EXISTS copiar_cervezas_after_update');
+
+        // Eliminar los triggers
+        DB::unprepared('DROP TRIGGER IF EXISTS copiar_cervezas_before_delete');
+
+
+        // Eliminar la tabla cervezas_copia
+        DB::unprepared('DROP TABLE IF EXISTS cervezas_copia');
+    }
+}
+```
+# Prueba
+
+1. **Cerveza**: POMELO IPA IDA Y VUELTA 24x33cl
+   - **Descripción**: **Estilo POMELO IPA. Sin gluten**
+     5,8 % ABV
+     IBU´S 50 , amarga.
+     **INGREDIENTES: **Agua; maltas de trigo Torrefacto y Extra pale; lúpulos Cascade, Columbus y Citra , copos de AVENA, zumo y cascara de pomelo  y levadura Ale.
+     Gastos de envio España Peninsular incluidos.
+     24 botellas 33 cl
+   - **Novedad**: No
+   - **Oferta**: No
+   - **Precio**: 59.81
+   - **Foto**: [Enlace a la imagen](https://res.cloudinary.com/dkrew530b/image/upload/v1697309153/pomelo_ipa_ida_y_vuelta_24x33cl_4baeb73584.jpg)
+   - **Marca**: DouGall's
+   - **Color**: Amarillo
+   - **Graduación**: Muy alta (9-12)
+   - **Tipo**: Lager/Pilsner
+   - **País**: España
+
+2. **Cerveza**: DIPA or Nothing 12x33
+   - **Descripción**: Estilo: DDH Doble IPA
+     Alcohol: 7,5 % Abv
+     IBU’S: 70 Bastante Amarga
+     Sin gluten
+     Ingredientes , Agua, maltas y lúpulos  Incognito Mosaic, Azacca y Vic Secret.
+     Gastos de envío España Peninsular incluidos.
+   - **Novedad**: No
+   - **Oferta**: No
+   - **Precio**: 46.58
+   - **Foto**: [Enlace a la imagen](https://res.cloudinary.com/dkrew530b/image/upload/v1697311032/dipa_or_nothing_12x33_a547d464d5.jpg)
+   - **Marca**: DIPA or Nothing
+   - **Color**: Tostada
+   - **Graduación**: Alta (7-9)
+   - **Tipo**: Sour Beer
+   - **País**: Alemania
+
+
+
+### Creación de procedimientos almacenados
+
+```js
+<?php
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up()
+    {
+        DB::unprepared('
+        CREATE PROCEDURE IF NOT EXISTS GetCervezasByPais(IN paisId INT)
+        BEGIN
+            SELECT * FROM cervezas WHERE pais_id = paisId;
+        END;
+    ');
+    }
+    
+    /**
+     * Reverse the migrations.
+     */
+    public function down()
+    {
+        DB::unprepared('DROP PROCEDURE IF EXISTS GetCervezasByPais');
+    }
+};
 ```

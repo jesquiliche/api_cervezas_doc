@@ -6,7 +6,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'API LARAVEL DOC',
+  title: 'API LARAVEL 10 DOC',
   tagline: 'Desarrollo de una API REST en Laravel 10',
   favicon: 'assets/images/favicon.ico',
 
@@ -14,12 +14,12 @@ const config = {
   url: 'https://jesquiliche.github.io',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/api-laravel-doc',
+  baseUrl: '/api_cervezas_doc',
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
   organizationName: 'jesquiliche', // Usually your GitHub org/user name.
-  projectName: 'api-cervezas-doc', // Usually your repo name.
+  projectName: 'api_cervezas_doc', // Usually your repo name.
   deploymentBranch:'gh-pages',
   trailingSlash:false,
 
