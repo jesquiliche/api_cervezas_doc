@@ -367,3 +367,58 @@ class RestoreDatabase extends Command
    Se verifica el valor de retorno (`$returnVar`). Si es igual a 0, se muestra un mensaje de éxito utilizando `$this->info()`. Si es distinto de 0, se muestra un mensaje de error utilizando `$this->error()`.
 
 En definitiva, este comando de Laravel permite restaurar una base de datos utilizando una cadena de comandos de MySQL generada dinámicamente a partir de los argumentos y la configuración de la base de datos. El resultado de la ejecución se muestra en la consola como un mensaje de éxito o de error. Esto puede ser útil para automatizar la restauración de bases de datos desde archivos de respaldo en un entorno de desarrollo o producción.
+
+## Programador de tareas
+
+En este apartado te guiaré a través de cómo programar una tarea en el Programador de Tareas de Windows para ejecutar el comando `php artisan app:backup-database`. Esto te permitirá automatizar la creación de copias de seguridad de tu base de datos en Laravel en horarios específicos. Sigue estos pasos:
+
+1. Abre el Programador de Tareas:
+   - Presiona `Win + S` para abrir la búsqueda de Windows.
+   - Escribe "Programador de Tareas" y selecciónalo en los resultados de búsqueda.
+
+2. En el lado derecho de la ventana del Programador de Tareas, haz clic en "Crear tarea básica..." para iniciar el asistente de creación de tareas.
+![Programador](/images/tarea1.png)
+
+3. Selecciona un nombre y una descripción para tu tarea. Puedes proporcionar una descripción opcional. Luego, haz clic en "Siguiente".
+![Programador](/images/tarea2.png)
+
+4. Elije la opción "Diariamente" o "Semanalmente", según tu preferencia, y haz clic en "Siguiente". Si deseas una programación más específica, como mensualmente, selecciona "Mensualmente" en su lugar.
+![Programador](/images/tarea3.png)
+
+5. Configura los detalles de la tarea:
+   - Si eliges "Diariamente", selecciona la hora exacta a la que deseas que se ejecute la copia de seguridad diaria. Puedes configurar la hora y los minutos.
+   - Si eliges "Semanalmente" o "Mensualmente", puedes personalizar los días de la semana o el día del mes en el que deseas que se ejecute la tarea, junto con la hora y los minutos.
+![Programador](/images/tarea4.png)
+
+
+6. En la siguiente pantalla, selecciona "Iniciar un programa" y haz clic en "Siguiente".
+
+7. En la pantalla "Iniciar un programa", debes proporcionar la ubicación del ejecutable que se utilizará para ejecutar el comando `php artisan app:backup-database`. Esto suele ser el ejecutable de PHP. Puedes encontrarlo en la carpeta de instalación de PHP. Debes proporcionar la ruta completa al ejecutable de PHP en el campo "Programa o script".
+
+   Ejemplo: `C:\Ruta\A\PHP\php.exe`
+
+   Luego, en el campo "Agregar argumentos (opcional)", ingresa la ruta completa de tu proyecto Laravel y el comando que deseas ejecutar.
+
+   Ejemplo: `C:\Ruta\A\Tu\Proyecto\Laravel\artisan app:backup-database`
+   ![Alt text](\images\tarea5.png)
+
+8. Asegúrate de que la opción "Iniciar en" apunte a la carpeta de tu proyecto Laravel.
+
+   Ejemplo: `C:\Ruta\A\Tu\Proyecto\Laravel`
+
+9. Haz clic en "Siguiente" y revisa la configuración de la tarea
+![Alt text](/images/tarea6.png).
+
+10. Marca la casilla "Abrir propiedades adicionales para esta tarea cuando finalice" y luego haz clic en "Finalizar".
+
+11. En la ventana de propiedades adicionales que se abre, dirígete a la pestaña "Condiciones" y configura las condiciones según tus preferencias. Por ejemplo, puedes configurar la tarea para que se ejecute solo si la computadora está conectada a una fuente de alimentación o para que se ejecute incluso si la computadora está en uso.
+
+![Alt text](/images/tarea7.png).
+
+12. Luego, dirígete a la pestaña "Configuración" y asegúrate de que la tarea esté configurada según tus preferencias. Puedes habilitar o deshabilitar las opciones según lo que necesites.
+
+13. Haz clic en "Aceptar" para guardar la tarea programada.
+
+Ahora, la tarea está programada para ejecutar el comando `php artisan app:backup-database` en los horarios y condiciones que hayas configurado. La copia de seguridad se creará automáticamente de acuerdo con la programación que hayas establecido. Puedes verificar las tareas programadas en el Programador de Tareas de Windows para asegurarte de que esté configurada correctamente.
+
+Ten en cuenta que debes mantener tu sistema y entorno de Laravel correctamente configurados para que esta tarea funcione sin problemas. Asegúrate de que PHP y Laravel estén instalados y configurados adecuadamente en tu servidor.
