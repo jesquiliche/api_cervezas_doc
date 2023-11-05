@@ -1,7 +1,7 @@
 ---
 sidebar_position: 5
 ---
-# 📖Rellenando la BB.DD
+# Rellenando la BB.DD
 ## Seeders
 
 ### 📇¿Qué es un seeder?

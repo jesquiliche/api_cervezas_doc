@@ -1,7 +1,7 @@
 ---
 sidebar_position: 1
 ---
-# 📖Conceptos básicos
+# Conceptos básicos
 ![Conceptos](/assets/images/rest_api.png)
 
 ## ¿Qué es una API REST?

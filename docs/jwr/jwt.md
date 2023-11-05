@@ -2,7 +2,7 @@
 sidebar_position: 1
 ---
 
-# 📖JSON Web Token
+# JSON Web Token
 
 ## ¿Qué es JWT?
 

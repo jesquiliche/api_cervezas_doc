@@ -2,7 +2,7 @@
 sidebar_position: 2
 ---
 
-# 📖Pruebas con Postman
+# Pruebas con Postman
 
 ## ¿Qué es Postman?
 

@@ -1,7 +1,7 @@
 ---
 sidebar_position: 6
 ---
-# 📖Controladores
+# Controladores
 ## ¿Qué es un controlador?
 Un **controlador** en Laravel es una clase PHP que se encarga de manejar las solicitudes HTTP y proporcionar una respuesta apropiada. Los controladores se utilizan para agrupar el lógica de negocios y proporcionar un punto de acceso central para el manejo de solicitudes **HTTP**.
 

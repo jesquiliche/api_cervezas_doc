@@ -1,7 +1,7 @@
 ---
 sidebar_position: 6
 ---
-# 📖Rutas
+# Rutas
 ![Conceptos](/assets/images/rutas.jpeg)
 
 ## ¿Qué es una ruta?

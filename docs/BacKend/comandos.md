@@ -1,7 +1,7 @@
 ---
 sidebar_position: 10
 ---
-# 📖Backup y restauración de la base datos
+# Backup y restauración de la base datos
 
 En este apartado desarrollaremos un sistema de Backups automáticos, programables y restauración. Para ello crearemos nuestros propios comandos **artisan** y aprenderemos a utilizar el **programador de tareas**.
 

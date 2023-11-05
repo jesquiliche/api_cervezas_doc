@@ -2,7 +2,7 @@
 sidebar_position: 1
 ---
 
-# 📖Instalación de Laravel 10
+# Instalación de Laravel 10
 ![Seeder](/assets/images/install.jpg)
 
 ## Instalación

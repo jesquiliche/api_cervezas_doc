@@ -2,7 +2,7 @@
 sidebar_position: 2
 ---
 
-# 📖Configuración BB.DD del proyecto
+# Configuración BB.DD del proyecto
 
 Para configurar una base de datos en un proyecto Laravel, necesitas realizar los siguientes pasos:
 

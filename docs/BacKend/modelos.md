@@ -2,7 +2,7 @@
 sidebar_position: 4
 ---
 
-# 📖Creando modelos y relaciones
+# Creando modelos y relaciones
 
 ## ¿Qué es un modelo?
 ![Descripcion de la imagen"](/images/orm.png)
