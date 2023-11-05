@@ -574,10 +574,6 @@ return new class extends Migration
                 cer.descripcion AS descripcion,
                 cer.color_id AS color_id,
                 cer.graduacion_id AS graduacion_id,
-                cer.tipo_id AS tipo_id,
-                cer.pais_id AS pais_id,
-                cer.created_at AS created_at,
-                cer.updated_at AS updated_at,
                 cer.novedad AS novedad,
                 cer.oferta AS oferta,
                 cer.precio AS precio,
@@ -593,6 +589,7 @@ return new class extends Migration
                 JOIN graduaciones g ON (cer.graduacion_id = g.id)
                 JOIN tipos t ON (t.id = cer.tipo_id)
                 JOIN paises p ON (p.id = cer.pais_id)
+            ORDER BY nombre
         ');
     }
 
@@ -608,6 +605,69 @@ return new class extends Migration
     }
 };
 ```
+
+export function TablaConImagenes() {
+  return (
+   <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Imagen_cerveza_foto</th>
+          <th>Descripción</th>
+          <th>Novedad</th>
+          <th>Oferta</th>
+          <th>Precio</th>
+          <th>Marca</th>
+          <th>Color</th>
+          <th>Graduación</th>
+          <th>Tipo</th>
+          <th>País</th>
+          
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>POMELO IPA IDA Y VUELTA 24x33cl</td>
+          <td width="200px"><img src="https://res.cloudinary.com/dkrew530b/image/upload/v1697309153/pomelo_ipa_ida_y_vuelta_24x33cl_4baeb73584.jpg" alt="Imagen 1" /></td>
+          <td>**Estilo POMELO IPA. Sin gluten** 5,8 % ABV IBU´S 50, amarga. **INGREDIENTES: **Agua; maltas de trigo Torrefacto y Extra pale; lúpulos Cascade, Columbus y Citra, copos de AVENA, zumo y cascara de pomelo, y levadura Ale. Gastos de envío España Peninsu...</td>
+          
+          <td>0</td>
+          <td>0</td>
+          <td>59.81</td>
+          <td>DouGall's</td>
+          <td>Amarillo</td>
+          <td>Muy alta (9-12)</td>
+          <td>Lager/Pilsner</td>
+          <td>España</td>
+          
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>DIPA or Nothing 12x33</td>
+          <td width="200px"><img src="https://res.cloudinary.com/dkrew530b/image/upload/v1697311032/dipa_or_nothing_12x33_a547d464d5.jpg" alt="Imagen 2" style={{width: 700 + 'px'}} /></td>
+          <td>Estilo: DDH Doble IPA Alcohol: 7,5 % Abv IBU’S: 70 Bastante Amarga Sin gluten Ingredientes , Agua, maltas y lúpulos Incognito Mosaic, Azacca y Vic Secret. Gastos de envío España Peninsular incluidos.</td>
+          
+          <td>0</td>
+          <td>0</td>
+          <td>46.58</td>
+          <td>DIPA or Nothing</td>
+          <td>Tostada</td>
+          <td>Alta (7-9)</td>
+          <td>Sour Beer</td>
+          <td>Alemania</td>
+          
+        </tr>
+      </tbody>
+    </table>
+  );
+}
+
+
+<TablaConImagenes />
+
+
 ### Creación de triggers
 
 ```js
@@ -671,41 +731,6 @@ class CreateTriggerCervezas extends Migration
     }
 }
 ```
-# Prueba
-
-1. **Cerveza**: POMELO IPA IDA Y VUELTA 24x33cl
-   - **Descripción**: **Estilo POMELO IPA. Sin gluten**
-     5,8 % ABV
-     IBU´S 50 , amarga.
-     **INGREDIENTES: **Agua; maltas de trigo Torrefacto y Extra pale; lúpulos Cascade, Columbus y Citra , copos de AVENA, zumo y cascara de pomelo  y levadura Ale.
-     Gastos de envio España Peninsular incluidos.
-     24 botellas 33 cl
-   - **Novedad**: No
-   - **Oferta**: No
-   - **Precio**: 59.81
-   - **Foto**: [Enlace a la imagen](https://res.cloudinary.com/dkrew530b/image/upload/v1697309153/pomelo_ipa_ida_y_vuelta_24x33cl_4baeb73584.jpg)
-   - **Marca**: DouGall's
-   - **Color**: Amarillo
-   - **Graduación**: Muy alta (9-12)
-   - **Tipo**: Lager/Pilsner
-   - **País**: España
-
-2. **Cerveza**: DIPA or Nothing 12x33
-   - **Descripción**: Estilo: DDH Doble IPA
-     Alcohol: 7,5 % Abv
-     IBU’S: 70 Bastante Amarga
-     Sin gluten
-     Ingredientes , Agua, maltas y lúpulos  Incognito Mosaic, Azacca y Vic Secret.
-     Gastos de envío España Peninsular incluidos.
-   - **Novedad**: No
-   - **Oferta**: No
-   - **Precio**: 46.58
-   - **Foto**: [Enlace a la imagen](https://res.cloudinary.com/dkrew530b/image/upload/v1697311032/dipa_or_nothing_12x33_a547d464d5.jpg)
-   - **Marca**: DIPA or Nothing
-   - **Color**: Tostada
-   - **Graduación**: Alta (7-9)
-   - **Tipo**: Sour Beer
-   - **País**: Alemania
 
 
 
