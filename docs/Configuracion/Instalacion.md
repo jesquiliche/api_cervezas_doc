@@ -114,5 +114,10 @@ Lo último, es cambiar la configuración del idioma del nuestro proyecto, abrimo
 ```js
 'locale' => 'es',
 ```
+También aprovecharemos àra configurar nuestra zona horaria.
+
+```js
+'timezone' => 'Europe/Madrid',
+```
 
 Una vez realizado este proceso ya dispondremos de Laravel traducido al eapañol.
