@@ -14,7 +14,7 @@ Otro beneficio importante de las migraciones es que pueden ahorrar tiempo y redu
 Además, las migraciones en Laravel también son muy flexibles. Los desarrolladores pueden crear migraciones para agregar nuevas tablas, modificar columnas existentes, agregar restricciones de clave foránea, crear índices, eliminar tablas y mucho más. Cada migración se compone de dos métodos principales: el método "up" que describe los cambios que deben realizarse en la base de datos y el método "down" que describe cómo deshacer esos cambios.
 
 En resumen, las migraciones en Laravel son una herramienta esencial para administrar la estructura de la base de datos de manera programática y coherente con la evolución de la aplicación. Al utilizar migraciones, los desarrolladores pueden mantener un registro de los cambios de la base de datos, ahorrar tiempo y reducir errores en la gestión de la base de datos, y tener una gran flexibilidad para realizar cambios en la estructura de la base de datos.
-### 📇Modelo ER
+### Modelo ER
 Este es el modelo entidad/relación de nuestra BB.DD.
 
 ![Modelo E/R](/images/er.png)
@@ -56,7 +56,7 @@ A continuación, veamos qué nos ha generado el comando anterior.
 
 ## Definiendo las tablas de la Base de Datos
 
-### 📇 Tabla de Colores
+###  Tabla de Colores
 
 Veamos qué ha hecho el comando anteriormente ejecutado:
 
@@ -198,7 +198,7 @@ La tabla **migraciones** de Laravel es utilizada por el sistema de migraciones d
 
 En resumen, la tabla `migraciones` en Laravel lleva un registro de todas las migraciones que se han aplicado a la base de datos, con información sobre su orden, identificación y el lote al que pertenecen. Esto es fundamental para mantener la integridad de la base de datos y realizar un seguimiento de los cambios en el esquema a lo largo del tiempo.
 
-### 📇Tabla Tipos
+### Tabla Tipos
 
 En esta tabla guardaremos los distintos de cerveza, como el tipo Ale,IPA,negra,etc.
 
@@ -241,7 +241,7 @@ return new class extends Migration
 };
 
 ```
-### 📇Tabla Paises
+### Tabla Paises
 
 Para crear la migración ejecute el siguiente comando desde su terminal.
 
@@ -286,7 +286,7 @@ return new class extends Migration
 };
 ```
 
-### 📇Tabla graduaciones
+### Tabla graduaciones
 
 Para crear la migración ejecute el siguiente comando desde su terminal.
 
@@ -332,7 +332,7 @@ return new class extends Migration
 
 
 ```
-### 📇Tabla Cervezas
+### Tabla Cervezas
 
 Para crear la migración ejecute el siguiente comando desde su terminal.
 
@@ -458,7 +458,7 @@ Puedes aplicar varias restricciones a una clave foránea (FK) en Laravel utiliza
 Estas restricciones te permiten definir cómo se deben manejar las operaciones de eliminación y actualización en las relaciones de clave foránea en Laravel para mantener la integridad referencial en la base de datos. Puedes elegir la restricción que mejor se adapte a tus necesidades según el comportamiento deseado en tu aplicación.
 :::
 
-### 📇Modificando la tabla cervezas
+### Modificando la tabla cervezas
 
 Hasta ahora hemos visto como crear nuestras tablas, pero no como modificarlas. Vamos a estudiar como modificar nuestra tabla cervezas. Nos hemos dado cuenta que nos hemos dejado dos campos en la tabla.
 Uno llamado **novedad** de tipo booleano que indicara si el producto es una novedad y otro **oferta** que indicara si nuestro producto esta en oferta.

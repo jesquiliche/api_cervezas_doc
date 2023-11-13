@@ -4,7 +4,7 @@ sidebar_position: 5
 # Rellenando la BB.DD
 ## Seeders
 
-### 📇¿Qué es un seeder?
+### ¿Qué es un seeder?
 ![Seeder](/assets/images/bd.webp)
 
 Un seeder en Laravel es una clase que se utiliza para poblar una base de datos con datos de prueba. Los seeders son útiles para probar aplicaciones, crear datos de prueba para desarrolladores y para personalizar una base de datos con información específica.
@@ -13,7 +13,7 @@ Cada seeder en Laravel extiende de la clase **Illuminate\Database\Seeder** y con
 
 Puedes crear varios seeders y ejecutarlos todos o solo algunos según tus necesidades. Al ejecutar un seeder, sus datos se insertan en la base de datos de forma automática, lo que te permite rellenar tus tablas de forma rápida y sencilla.
 
-### 📇¿Cómo se crea un seeder?
+### ¿Cómo se crea un seeder?
 
 
 Para crear un seeder en Laravel, puedes usar el siguiente comando de Artisan:
@@ -61,7 +61,7 @@ También puedes ejecutar un seeder específico utilizando el siguiente comando:
 ```bash
 php artisan db:seed --class=NombreSeeder
 ```
-### 📇ColoresSeeder
+### ColoresSeeder
 
 Vamos a poner en practica lo aprendido en el apartado anterior. Crearemos un **seeder** destinado a rellanar nuestra tabla colores con los distintos colores que puede tener una cerveza. Para ello ejecute el siguiente comando en su terminal y dentro de su proyecto.
 
@@ -121,7 +121,7 @@ Este Seeder en Laravel tiene como objetivo insertar datos en la tabla "colores" 
 
 A continuación aplicaremos la misma lógica para el resto de seeders
 
-### 📇TiposSeeder
+### TiposSeeder
 ```js title="database\seeders\TiposSeeder.php"
 <?php
 
@@ -375,7 +375,7 @@ Vamos a desglosar lo que hace paso a paso:
 En resumen, este Seeder se encarga de eliminar los datos existentes en la tabla "cervezas" y luego inserta nuevos registros en esa tabla a partir de los datos contenidos en el archivo JSON "cervezas.json". Es una forma eficaz de poblar la base de datos con datos iniciales para su aplicación Laravel.
 :::
 
-### 📇Ejecución masiva de los Seeders
+### Ejecución masiva de los Seeders
 
 Para ejecutar múltiples seeders en Laravel, puedes utilizar el comando de *Artisan db:seed*. Este comando se utiliza para llenar la base de datos con datos iniciales y se ejecuta en la consola.
 
