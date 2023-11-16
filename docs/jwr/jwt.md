@@ -48,24 +48,126 @@ Dentro del archivo **config/auth.php**, tendremos que hacer algunos cambios para
 Primero, haremos los siguientes cambios en el archivo:
 
 ```js
-'defaults' => [
-    'guard' => 'api',
+<?php
+
+return [
+
+    /*
+    |--------------------------------------------------------------------------
+    | Authentication Defaults
+    |--------------------------------------------------------------------------
+    |
+    | This option controls the default authentication "guard" and password
+    | reset options for your application. You may change these defaults
+    | as required, but they're a perfect start for most applications.
+    |
+    */
+
+    'defaults' => [
+        'guard' => 'api',
         'passwords' => 'users',
-],
-
-
-'guards' => [
-    'web' => [
-        'driver' => 'session',
-        'provider' => 'users',
     ],
 
-    'api' => [
+    /*
+    |--------------------------------------------------------------------------
+    | Authentication Guards
+    |--------------------------------------------------------------------------
+    |
+    | Next, you may define every authentication guard for your application.
+    | Of course, a great default configuration has been defined for you
+    | here which uses session storage and the Eloquent user provider.
+    |
+    | All authentication drivers have a user provider. This defines how the
+    | users are actually retrieved out of your database or other storage
+    | mechanisms used by this application to persist your user's data.
+    |
+    | Supported: "session"
+    |
+    */
+
+    'guards' => [
+        'web' => [
+            'driver' => 'session',
+            'provider' => 'users',
+        ],
+
+        'api' => [
             'driver' => 'jwt',
             'provider' => 'users',
+        ],
     ],
 
-],
+    /*
+    |--------------------------------------------------------------------------
+    | User Providers
+    |--------------------------------------------------------------------------
+    |
+    | All authentication drivers have a user provider. This defines how the
+    | users are actually retrieved out of your database or other storage
+    | mechanisms used by this application to persist your user's data.
+    |
+    | If you have multiple user tables or models you may configure multiple
+    | sources which represent each model / table. These sources may then
+    | be assigned to any extra authentication guards you have defined.
+    |
+    | Supported: "database", "eloquent"
+    |
+    */
+
+    'providers' => [
+        'users' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\User::class,
+        ],
+
+        // 'users' => [
+        //     'driver' => 'database',
+        //     'table' => 'users',
+        // ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Resetting Passwords
+    |--------------------------------------------------------------------------
+    |
+    | You may specify multiple password reset configurations if you have more
+    | than one user table or model in the application and you want to have
+    | separate password reset settings based on the specific user types.
+    |
+    | The expiry time is the number of minutes that each reset token will be
+    | considered valid. This security feature keeps tokens short-lived so
+    | they have less time to be guessed. You may change this as needed.
+    |
+    | The throttle setting is the number of seconds a user must wait before
+    | generating more password reset tokens. This prevents the user from
+    | quickly generating a very large amount of password reset tokens.
+    |
+    */
+
+    'passwords' => [
+        'users' => [
+            'provider' => 'users',
+            'table' => 'password_reset_tokens',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Password Confirmation Timeout
+    |--------------------------------------------------------------------------
+    |
+    | Here you may define the amount of seconds before a password confirmation
+    | times out and the user is prompted to re-enter their password via the
+    | confirmation screen. By default, the timeout lasts for three hours.
+    |
+    */
+
+    'password_timeout' => 10800,
+
+];
 ```
 En este código, estamos diciendo al guardián API que use el controlador JWT y que haga del guardián API el predeterminado.
 
@@ -78,66 +180,69 @@ Reemplaza el código en el archivo app/Models/User.php con lo siguiente:
 
 ```js
 <?php
+
 namespace App\Models;
+
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject
 {
-use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
-/**
- * Los atributos que son asignables en masa.
- *
- * @var array<int, string>
- */
-protected $fillable = [
-    'name',
-    'email',
-    'password',
-];
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+    ];
 
-/**
- * Los atributos que deben estar ocultos para la serialización.
- *
- * @var array<int, string>
- */
-protected $hidden = [
-    'password',
-    'remember_token',
-];
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
 
-/**
- * Los atributos que deben ser convertidos.
- *
- * @var array<string, string>
- */
-protected $casts = [
-    'email_verified_at' => 'datetime',
-];
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+    ];
 
- /**
- * Obtiene el identificador que se almacenará en la afirmación de sujeto del JWT.
- *
- * @return mixed
- */
-public function getJWTIdentifier()
-{
-    return $this->getKey();
-}
+    /**
+     * Get the identifier that will be stored in the subject claim of the JWT.
+     *
+     * @return mixed
+     */
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
 
-/**
- * Devuelve un array de valores clave, que contiene cualquier afirmación personalizada que deba agregarse al JWT.
- *
- * @return array
- */
-public function getJWTCustomClaims()
-{
-    return [];
-}
+    /**
+     * Return a key value array, containing any custom claims to be added to the JWT.
+     *
+     * @return array
+     */
+    public function getJWTCustomClaims()
+    {
+        return [];
+    }
 }
 ```
 ¡Eso es todo para nuestra configuración de modelos!
@@ -167,20 +272,20 @@ Ahora, crearemos un controlador para manejar la lógica central del proceso de a
 Primero, ejecutaremos este comando para generar el controlador:
 
 ```js
-php artisan make:controller AuthController
+php artisan make:controller API/AuthController
 ```
 Luego, reemplazaremos el contenido del controlador con el siguiente fragmento de código:
 
 ```js
 <?php
-
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
@@ -191,10 +296,15 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'email' => 'required|string|email',
             'password' => 'required|string',
         ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
         $credentials = $request->only('email', 'password');
         $token = Auth::attempt($credentials);
         
@@ -216,11 +326,15 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6',
         ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
 
         $user = User::create([
             'name' => $request->name,
@@ -228,9 +342,15 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        $token = Auth::login($user);
         return response()->json([
+            'status' => 'success',
             'message' => 'User created successfully',
-            'user' => $user
+            'user' => $user,
+            'authorization' => [
+                'token' => $token,
+                'type' => 'bearer',
+            ]
         ]);
     }
 
@@ -246,7 +366,7 @@ class AuthController extends Controller
     {
         return response()->json([
             'user' => Auth::user(),
-            'authorisation' => [
+            'authorization' => [
                 'token' => Auth::refresh(),
                 'type' => 'bearer',
             ]
