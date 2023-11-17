@@ -459,6 +459,21 @@ En este caso le estamos indicando a nuestro controlador AuthController que todos
 
 ### Probando las rutas
 
+Para probar nuestras rutas protegidas podemos utilizar el mismo archivo de rutas que hemos utilizado en apartados anteriores, añadiendo unos pocas modificaciones.
+
+1.- Introduciremos una variable en nuestro archivo que nos permitirá guardar nuestro **token**, el cual obtendremos haciendo login.
+
+```js
+@accessToken = Su token
+```
+
+En todas las rutas que necesiten autenticación introduciremos el siguiente texto en el header.
+
+```js
+Authorization: Bearer {{accessToken}}
+```
+A continuación le mostramos como debería quedar este archivo de rutas.
+
 ```js
 @accessToken = eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2xvZ2luIiwiaWF0IjoxNzAwMjE5NzcwLCJleHAiOjE3MDAyMjMzNzAsIm5iZiI6MTcwMDIxOTc3MCwianRpIjoiMlNBNHU3dmtDenZZTkZyaCIsInN1YiI6IjIyIiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.P8ufvwBKvOj6hS86FI-5e57iA_Y7eLu42mzvawM7l6g
 
