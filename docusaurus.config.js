@@ -104,7 +104,7 @@ const config = {
             items: [
                            {
                 label: 'GitHub',
-                href: 'https://github.com/jesquiliche/API-LARAVEL',
+                href: 'https://github.com/jesquiliche/laravel_birras',
               },
             ],
           },
