@@ -52,11 +52,13 @@ El método **Route::apiResource()** se utiliza para definir rutas para los sigui
 
 En resumen, este código define un conjunto de rutas para una aplicación Laravel 10, que permiten a los usuarios interactuar con diferentes recursos a través de una API REST.
 
+### Probando las rutas
+
+Para probar nuestras rutas vamos a utilizar un **plugin** de **Visual Studio Code** llamado **REST client** que permite almacenar todos nuestros endpoints en un archivo de texto para uso futuro, el cual también nos puede servir documentación. Aunque puede utilizar cualquier cliente REST que le apetezca como **POSTMAN**.
+
 ```
-@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdhcmNpYUBnbWFpbC5jb20iLCJpZCI6MTEsImlhdCI6MTY5MjQ3ODEzMCwiZXhwIjoxNjkyNTY0NTMwfQ.3VQEqm6AdcKeeXgUvh0P9OKeWD2X1uSqZLhpucSHxKM
 #### Obtener todos los colores
 GET http://localhost:8000/api/v1/colores
-# Authorization: Bearer {{accessToken}}
 
 ### Crear color
 POST   http://localhost:8000/api/v1/colores
@@ -80,11 +82,9 @@ Content-Type: application/json
 
 #### Obtener todos los paises
 GET http://localhost:8000/api/v1/paises
-# Authorization: Bearer {{accessToken}}
 
 #### Obtener pais por su id
 GET http://localhost:8000/api/v1/paises/5
-# Authorization: Bearer {{accessToken}}
 
 ### Crear país
 POST   http://localhost:8000/api/v1/paises
@@ -108,11 +108,9 @@ DELETE   http://localhost:8000/api/v1/paises/9
 
 #### Obtener todos los tipos
 GET http://localhost:8000/api/v1/tipos
-# Authorization: Bearer {{accessToken}}
 
 #### Obtener tipo por su id
 GET http://localhost:8000/api/v1/tipos/5
-# Authorization: Bearer {{accessToken}}
 
 ### Crear tipo
 POST   http://localhost:8000/api/v1/tipos
@@ -136,13 +134,9 @@ DELETE   http://localhost:8000/api/v1/tipos/2
 
 #### Obtener todas las graduaciones
 GET http://localhost:8000/api/v1/graduaciones
-# Authorization: Bearer {{accessToken}}
-
-
 
 #### Obtener graduación por su id
 GET http://localhost:8000/api/v1/graduaciones/5
-# Authorization: Bearer {{accessToken}}
 
 ### Crear graduación
 POST   http://localhost:8000/api/v1/tipos
@@ -166,12 +160,9 @@ DELETE   http://localhost:8000/api/v1/graduaciones/1
 
 #### Obtener las cervezas
 GET http://localhost:8000/api/v1/cervezas
-# Authorization: Bearer {{accessToken}}
-
 
 #### Obtener las cervezas
 GET http://localhost:8000/api/v1/cervezas?per_page=1&novedad=0&marca=a
-# Authorization: Bearer {{accessToken}}
 
 #### Crear cerveza
 POST   http://localhost:8000/api/v1/cervezas
@@ -223,4 +214,3 @@ Content-Type: application/json
 #### Borrar cerveza
 DELETE  http://localhost:8000/api/v1/cervezas/15
 ```
-

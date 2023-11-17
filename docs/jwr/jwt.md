@@ -392,3 +392,67 @@ public function __construct()
 ```
 
 ¡Hemos terminado de configurar nuestra autenticación JWT!
+
+## Rutas protegidas
+
+En el contexto de APIs, la autenticación y protección de rutas son igualmente cruciales para asegurarse de que solo usuarios autorizados puedan acceder a los recursos protegidos. Laravel ofrece varias opciones para implementar rutas protegidas en el contexto de APIs.
+
+### Introducción a Rutas Protegidas en APIs con Laravel:
+
+#### 1. **Autenticación API:**
+En una API, la autenticación suele realizarse mediante tokens de acceso. Laravel proporciona una autenticación API incorporada que se puede lograr a través de Passport o utilizando el middleware `auth:api` predeterminado.
+
+#### 2. **Cómo se Aplica el Middleware `auth:api`:**
+- Aplica el middleware `auth:api` directamente a una ruta específica:
+
+    ```js
+    use App\Http\Controllers\ProfileController;
+    Route::get('/profile', [ProfileController::class, 'show'])->middleware('auth:api');
+    ```
+
+- O agrúpalo en un grupo de rutas protegidas:
+
+    ```php
+    Route::middleware(['auth:api'])->group(function () {
+        // Rutas protegidas para la API
+        Route::get('/profile', 'ProfileController@show');
+        // Otras rutas...
+    });
+    ```
+
+#### 3. **Personalización del Middleware:**
+Puedes personalizar el middleware `auth:api` para incluir lógica específica para tu aplicación, como verificación de roles o permisos.
+
+#### 4. **Tokens de Acceso:**
+Para acceder a rutas protegidas en una API, los clientes deben incluir un token de acceso válido en la solicitud. Este token se obtiene generalmente mediante el proceso de autenticación (login) y se incluye en el encabezado `Authorization` de las solicitudes subsiguientes.
+
+#### 5. **Gestión de Tokens:**
+Si estás utilizando Passport, Laravel proporciona un sistema completo para gestionar tokens de acceso, incluida la revocación de tokens.
+
+#### 6. **Protección contra Ataques CSRF:**
+Cuando trabajas con APIs, no hay CSRF (Cross-Site Request Forgery) ya que no hay sesiones de navegador involucradas. Sin embargo, aún es esencial proteger contra otros tipos de ataques, como SQL injection.
+
+#### 7. **Pruebas en Entornos de Desarrollo:**
+Utiliza herramientas como Postman o cURL para probar tus rutas protegidas durante el desarrollo. Asegúrate de incluir el token de acceso válido en las solicitudes.
+
+En resumen, las rutas protegidas en APIs se centran en la autenticación mediante tokens de acceso. Laravel facilita la implementación de este concepto a través del middleware `auth:api` y proporciona herramientas adicionales para gestionar la autenticación y autorización de manera eficiente en el contexto de APIs.
+
+### Puesta en practica
+Vamos a ver como implementar las rutas protegidas en nuestro contralador **CervezaController**:
+
+```js
+public function __construct()
+    {
+        $this->middleware('auth:api')->only(['store', 'delete','update','patch']);
+    }
+```
+Con este código le estamos indicando al constructor de nuestra clase **CervezaController** que solo los métodos **store**,**delete**,**update** y **patch** necesitan de autenticación. También podríamos hacer al reves como en el caso del controlador **AuthController**.
+
+```js
+public function __construct()
+    {
+        $this->middleware('auth:api', ['except' => ['login', 'register']]);
+    }
+```
+
+En este caso le estamos indicando a nuestro controlador AuthController que todos los métodos de la clase a excepción de los métodos **login** y **register** están protegidos por el middleware `auth:api`
