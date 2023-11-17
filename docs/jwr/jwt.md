@@ -443,7 +443,7 @@ Vamos a ver como implementar las rutas protegidas en nuestro contralador **Cerve
 ```js
 public function __construct()
     {
-        $this->middleware('auth:api')->only(['store', 'delete','update','patch']);
+        $this->middleware('auth:api')->only(['store', 'destroy','update','patch']);
     }
 ```
 Con este código le estamos indicando al constructor de nuestra clase **CervezaController** que solo los métodos **store**,**delete**,**update** y **patch** necesitan de autenticación. También podríamos hacer al reves como en el caso del controlador **AuthController**.
@@ -455,4 +455,4 @@ public function __construct()
     }
 ```
 
-En este caso le estamos indicando a nuestro controlador AuthController que todos los métodos de la clase a excepción de los métodos **login** y **register** están protegidos por el middleware `auth:api`
+En este caso le estamos indicando a nuestro controlador AuthController que todos los métodos de la clase a excepción de los métodos **login** y **register** están protegidos por el middleware `auth:api`. Puede replicar este mismo constructor para el resto de controladores.
