@@ -456,3 +456,208 @@ public function __construct()
 ```
 
 En este caso le estamos indicando a nuestro controlador AuthController que todos los métodos de la clase a excepción de los métodos **login** y **register** están protegidos por el middleware `auth:api`. Puede replicar este mismo constructor para el resto de controladores.
+
+### Probando las rutas
+
+```js
+@accessToken = eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2xvZ2luIiwiaWF0IjoxNzAwMjE5NzcwLCJleHAiOjE3MDAyMjMzNzAsIm5iZiI6MTcwMDIxOTc3MCwianRpIjoiMlNBNHU3dmtDenZZTkZyaCIsInN1YiI6IjIyIiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.P8ufvwBKvOj6hS86FI-5e57iA_Y7eLu42mzvawM7l6g
+
+#### Registrarse
+POST  http://127.0.0.1:8000/api/register
+Content-Type: application/json
+
+{
+    "name":"Jesus",
+    "email":"jesquiliche@hotmail.com",
+    "password":"1234678"
+}
+
+#### Login
+POST  http://127.0.0.1:8000/api/login
+Content-Type: application/json
+
+{
+    "email":"jesquiliche@hotmail.com",
+    "password":"1234678"
+}
+
+#### Logout
+POST  http://127.0.0.1:8000/api/logout
+Authorization: Bearer {{accessToken}}
+
+#### refresh
+POST  http://127.0.0.1:8000/api/refresh
+Authorization: Bearer {{accessToken}}
+
+
+#### Obtener todos los colores
+GET http://localhost:8000/api/v1/colores
+
+### Crear color
+POST   http://localhost:8000/api/v1/colores
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+    "nombre":"Rojo"
+}
+
+### Obtener color por Id
+GET   http://localhost:8000/api/v1/colores/1
+
+
+### Modificicar color
+DELETE   http://localhost:8000/api/v1/colores/1
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+    "nombre":"Prueba 2"
+}
+
+#### Obtener todos los paises
+GET http://localhost:8000/api/v1/paises
+
+#### Obtener pais por su id
+GET http://localhost:8000/api/v1/paises/5
+
+### Crear país
+POST   http://localhost:8000/api/v1/paises
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+    "nombre":"Peru"
+}
+
+### Modificar  país
+PUT   http://localhost:8000/api/v1/paises/1
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+    "nombre":"Pais modificado"
+}
+
+### Borrando pais
+DELETE   http://localhost:8000/api/v1/paises/9
+Authorization: Bearer {{accessToken}}
+
+
+#### Obtener todos los tipos
+GET http://localhost:8000/api/v1/tipos
+
+#### Obtener tipo por su id
+GET http://localhost:8000/api/v1/tipos/5
+
+### Crear tipo
+POST   http://localhost:8000/api/v1/tipos
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+    "nombre":"Sin alcohol"
+}
+
+### Modificar tipo
+PUT   http://localhost:8000/api/v1/tipos/1
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+    "nombre":"Doble malta"
+}
+
+### Borrar tipo
+DELETE   http://localhost:8000/api/v1/tipos/2
+Authorization: Bearer {{accessToken}}
+
+#### Obtener todas las graduaciones
+GET http://localhost:8000/api/v1/graduaciones
+
+#### Obtener graduación por su id
+GET http://localhost:8000/api/v1/graduaciones/5
+
+### Crear graduación
+POST   http://localhost:8000/api/v1/tipos
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+    "nombre":"Super toxica"
+}
+
+### Modificar tipo
+PUT   http://localhost:8000/api/v1/graduaciones/3
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+    "nombre":"Puro alcohol"
+}
+
+### Bor6543rar tipo
+DELETE   http://localhost:8000/api/v1/graduaciones/1
+Authorization: Bearer {{accessToken}}
+
+
+#### Obtener las cervezas
+GET http://localhost:8000/api/v1/cervezas
+
+#### Obtener las cervezas
+GET http://localhost:8000/api/v1/cervezas?per_page=1&novedad=0&marca=a
+
+#### Crear cerveza
+POST   http://localhost:8000/api/v1/cervezas
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+    "nombre":"Cerveza Voldamm14",
+    "descripcion":"La mejor cerveza de españa",
+    "color_id":4,
+    "graduacion_id":2,
+    "tipo_id":1,
+    "pais_id":1,
+    "novedad":1,
+    "oferta":1,
+    "precio":0,
+    "foto":"imagen",
+    "marca":"damm"
+}
+
+#### Modificar cerveza
+PUT   http://localhost:8000/api/v1/cervezas/14
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+    "nombre":"Cerveza Voldamm Modificada",
+    "descripcion":"La mejor cerveza de españa erer",
+    "color_id":4,
+    "graduacion_id":2,
+    "tipo_id":1,
+    "pais_id":1,
+    "novedad":1,
+    "oferta":1,
+    "precio":0,
+    "marca":"damm"
+}
+
+#### Modificar cerveza
+PATCH  http://localhost:8000/api/v1/cervezas/14
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+    "nombre":"Cerveza Voldamm Modif 2",
+    "descripcion":"La mejor cerveza de españa erer",
+    "color_id":4,
+    "graduacion_id":2,
+    "marca":"damm"
+}
+
+#### Borrar cerveza
+DELETE  http://localhost:8000/api/v1/cervezas/15
+Authorization: Bearer {{accessToken}}
+```
