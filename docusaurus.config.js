@@ -79,7 +79,7 @@ const config = {
             label: 'Tutorial',
           },
           {
-            href: 'https://github.com/jesquiliche/api_cervezas_doc',
+            href: 'https://github.com/jesquiliche/laravel_birras',
             label: 'GitHub',
             position: 'right',
           },
