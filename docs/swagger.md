@@ -378,7 +378,7 @@ Esta anotación documenta claramente cómo realizar la actualización del token 
 
 ### Código completo del controlador
 
-````js
+```js
 <?php
 
 namespace App\Http\Controllers\Api\V1;
