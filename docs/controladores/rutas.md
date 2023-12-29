@@ -15,35 +15,26 @@ En el archivo api.php deberíamos tener el siguiente código:
 ```js title="routes\api.php"
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
-*/
-
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::controller(AuthController::class)->group(function () {
+    Route::post('login', 'login');
+    Route::post('register', 'register');
+    Route::post('logout', 'logout');
+    Route::post('refresh', 'refresh');
 });
 
 Route::apiResource('v1/colores', App\Http\Controllers\Api\V1\ColorController::class);
 Route::apiResource('v1/paises', App\Http\Controllers\Api\V1\PaisController::class);
 Route::apiResource('v1/tipos', App\Http\Controllers\Api\V1\TipoController::class);
 Route::apiResource('v1/graduaciones', App\Http\Controllers\Api\V1\GraduacionController::class);
-//Route::apiResource('v1/cervezas', App\Http\Controllers\Api\V1\CervezaController::class);
 
 Route::get('v1/cervezas',[App\Http\Controllers\Api\V1\CervezaController::class,'index']);
-Route::get('v1/cervezas/{id}',[App\Http\Controllers\Api\V1\CervezaController::class,'index']);
+Route::get('v1/cervezas/{id}',[App\Http\Controllers\Api\V1\CervezaController::class,'show']);
 Route::put('v1/cervezas/{id}',[App\Http\Controllers\Api\V1\CervezaController::class,'update']);
 Route::patch('v1/cervezas/{id}',[App\Http\Controllers\Api\V1\CervezaController::class,'patch']);
-Route::post('v1/cervezas/{id}',[App\Http\Controllers\Api\V1\CervezaController::class,'store']);
+Route::post('v1/cervezas',[App\Http\Controllers\Api\V1\CervezaController::class,'store']);
 Route::delete('v1/cervezas/{id}',[App\Http\Controllers\Api\V1\CervezaController::class,'destroy']);
 ```
 Este código define rutas para una aplicación Laravel 10. Utiliza el método Route::controller() para crear un grupo de rutas que son manejadas por un controlador específico (AuthController en este caso). Este controlador contiene métodos para iniciar sesión, registrarse, cerrar sesión y actualizar el token de autenticación.
