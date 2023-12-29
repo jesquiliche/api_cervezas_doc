@@ -389,6 +389,7 @@ class Cerveza extends Model
     }
 }
 ```
+
 Los siguientes modelos siguen el mismo el mismo mecanismo de edición y creación.
 
 ### País
