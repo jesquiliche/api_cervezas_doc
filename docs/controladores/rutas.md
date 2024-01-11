@@ -32,6 +32,11 @@ Route::apiResource('v1/graduaciones', App\Http\Controllers\Api\V1\GraduacionCont
 
 Route::get('v1/cervezas',[App\Http\Controllers\Api\V1\CervezaController::class,'index']);
 Route::get('v1/cervezas/{id}',[App\Http\Controllers\Api\V1\CervezaController::class,'show']);
+Route::get('v1/consultaCervezasPorPais',[App\Http\Controllers\Api\V1\SystemController::class,'consultaCervezasPorPais']);
+Route::get('v1/consultaCervezasPorTipo',[App\Http\Controllers\Api\V1\SystemController::class,'consultaCervezasPorTipo']);
+Route::get('v1/consultaTablas',[App\Http\Controllers\Api\V1\SystemController::class,'consultaTablas']);
+Route::get('v1/consultaBD',[App\Http\Controllers\Api\V1\SystemController::class,'consultaBD']);
+
 Route::put('v1/cervezas/{id}',[App\Http\Controllers\Api\V1\CervezaController::class,'update']);
 Route::patch('v1/cervezas/{id}',[App\Http\Controllers\Api\V1\CervezaController::class,'patch']);
 Route::post('v1/cervezas',[App\Http\Controllers\Api\V1\CervezaController::class,'store']);
@@ -48,15 +53,46 @@ En resumen, este código define un conjunto de rutas para una aplicación Larave
 Para probar nuestras rutas vamos a utilizar un **plugin** de **Visual Studio Code** llamado **REST client** que permite almacenar todos nuestros endpoints en un archivo de texto para uso futuro, el cual también nos puede servir documentación. Aunque puede utilizar cualquier cliente REST que le apetezca como **POSTMAN**.
 
 ```
+@accessToken = eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2xvZ2luIiwiaWF0IjoxNzA0NzAwNzcxLCJleHAiOjE3MDQ3MDQzNzEsIm5iZiI6MTcwNDcwMDc3MSwianRpIjoidXlIYmtTQU5ZNlZ5bkFaeSIsInN1YiI6IjEiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.o6pzi58w4dUUzSsJhlzBC9PWIVSqKrc2EpRqVx2WNpQ
+
+#### Registrarse
+POST  http://127.0.0.1:8000/api/register
+Content-Type: application/json
+
+{
+    "name":"Jesus",
+    "email":"jesquiliche@hotmail.com",
+    "password":"1234678"
+}
+
+#### Login
+POST  http://127.0.0.1:8000/api/login
+Content-Type: application/json
+
+{
+    "email":"admin@test.com",
+    "password":"admin_password"
+}
+
+#### Logout
+POST  http://127.0.0.1:8000/api/logout
+Authorization: Bearer {{accessToken}}
+
+#### refresh
+POST  http://127.0.0.1:8000/api/refresh
+Authorization: Bearer {{accessToken}}
+
+
 #### Obtener todos los colores
 GET http://localhost:8000/api/v1/colores
 
 ### Crear color
 POST   http://localhost:8000/api/v1/colores
 Content-Type: application/json
+Authorization: Bearer {{accessToken}}
 
 {
-    "nombre":""
+    "nombre":"Rojo"
 }
 
 ### Obtener color por Id
@@ -66,6 +102,7 @@ GET   http://localhost:8000/api/v1/colores/1
 ### Modificicar color
 DELETE   http://localhost:8000/api/v1/colores/1
 Content-Type: application/json
+Authorization: Bearer {{accessToken}}
 
 {
     "nombre":"Prueba 2"
@@ -80,6 +117,7 @@ GET http://localhost:8000/api/v1/paises/5
 ### Crear país
 POST   http://localhost:8000/api/v1/paises
 Content-Type: application/json
+Authorization: Bearer {{accessToken}}
 
 {
     "nombre":"Peru"
@@ -88,6 +126,7 @@ Content-Type: application/json
 ### Modificar  país
 PUT   http://localhost:8000/api/v1/paises/1
 Content-Type: application/json
+Authorization: Bearer {{accessToken}}
 
 {
     "nombre":"Pais modificado"
@@ -95,33 +134,38 @@ Content-Type: application/json
 
 ### Borrando pais
 DELETE   http://localhost:8000/api/v1/paises/9
+Authorization: Bearer {{accessToken}}
 
 
 #### Obtener todos los tipos
 GET http://localhost:8000/api/v1/tipos
 
 #### Obtener tipo por su id
-GET http://localhost:8000/api/v1/tipos/5
+GET http://localhost:8000/api/v1/tipos/1
 
 ### Crear tipo
 POST   http://localhost:8000/api/v1/tipos
 Content-Type: application/json
+Authorization: Bearer {{accessToken}}
 
 {
     "nombre":"Sin alcohol"
 }
 
 ### Modificar tipo
-PUT   http://localhost:8000/api/v1/tipos/1
+PATCH    http://localhost:8000/api/v1/tipos/11
 Content-Type: application/json
+Authorization: Bearer {{accessToken}}
 
 {
-    "nombre":"Doble malta"
+    "update_at":"32323323",
+    "nombre":"Doble malta",
+    "descripcion":"Prueba"
 }
 
 ### Borrar tipo
 DELETE   http://localhost:8000/api/v1/tipos/2
-
+Authorization: Bearer {{accessToken}}
 
 #### Obtener todas las graduaciones
 GET http://localhost:8000/api/v1/graduaciones
@@ -132,14 +176,20 @@ GET http://localhost:8000/api/v1/graduaciones/5
 ### Crear graduación
 POST   http://localhost:8000/api/v1/tipos
 Content-Type: application/json
+Authorization: Bearer {{accessToken}}
 
 {
     "nombre":"Super toxica"
 }
 
+### Obtener ripo
+GET   http://localhost:8000/api/v1/tipos/1
+
+
 ### Modificar tipo
 PUT   http://localhost:8000/api/v1/graduaciones/3
 Content-Type: application/json
+Authorization: Bearer {{accessToken}}
 
 {
     "nombre":"Puro alcohol"
@@ -147,10 +197,15 @@ Content-Type: application/json
 
 ### Bor6543rar tipo
 DELETE   http://localhost:8000/api/v1/graduaciones/1
+Authorization: Bearer {{accessToken}}
 
 
 #### Obtener las cervezas
-GET http://localhost:8000/api/v1/cervezas
+GET http://localhost:8000/api/v1/cervezas?oferta=0
+
+
+#### Obtener una cerveza
+GET http://localhost:8000/api/v1/cervezas/15
 
 #### Obtener las cervezas
 GET http://localhost:8000/api/v1/cervezas?per_page=1&novedad=0&marca=a
@@ -158,6 +213,7 @@ GET http://localhost:8000/api/v1/cervezas?per_page=1&novedad=0&marca=a
 #### Crear cerveza
 POST   http://localhost:8000/api/v1/cervezas
 Content-Type: application/json
+Authorization: Bearer {{accessToken}}
 
 {
     "nombre":"Cerveza Voldamm14",
@@ -174,8 +230,9 @@ Content-Type: application/json
 }
 
 #### Modificar cerveza
-PUT   http://localhost:8000/api/v1/cervezas/15
+PUT   http://localhost:8000/api/v1/cervezas/14
 Content-Type: application/json
+Authorization: Bearer {{accessToken}}
 
 {
     "nombre":"Cerveza Voldamm Modificada",
@@ -193,15 +250,29 @@ Content-Type: application/json
 #### Modificar cerveza
 PATCH  http://localhost:8000/api/v1/cervezas/15
 Content-Type: application/json
+Authorization: Bearer {{accessToken}}
 
 {
-    "nombre":"Cerveza Voldamm Modif 2",
-    "descripcion":"La mejor cerveza de españa erer",
-    "color_id":4,
-    "graduacion_id":2,
-    "marca":"damm"
+    "id": 13,
+    "novedad":1,
+    "oferta":1,
+    "tipo_id": 16,
+   
+    
 }
-
 #### Borrar cerveza
-DELETE  http://localhost:8000/api/v1/cervezas/15
+DELETE  http://localhost:8000/api/v1/cervezas/1
+Authorization: Bearer {{accessToken}}
+
+#### Obtener cervezas por pais
+GET  http://localhost:8000/api/v1/consultaCervezasPorPais
+
+#### Obtener cervezas por pais
+GET  http://localhost:8000/api/v1/consultaCervezasPorTipo
+
+#### Obtener cervezas por pais
+GET  http://localhost:8000/api/v1/consultaTablas
+
+#### Obtener cervezas por pais
+GET  http://localhost:8000/api/v1/consultaDB
 ```

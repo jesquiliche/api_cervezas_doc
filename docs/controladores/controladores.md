@@ -332,25 +332,33 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Tipo;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-
 
 class TipoController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * Método: index
-     * Ruta asociada: GET /tipos
-     * Descripción: Este método muestra una lista de recursos (en este caso, tipoes).
-     */
-    public function index()
+    
+    public function __construct()
     {
-        // Recuperar todos los tipoes desde la base de datos y retornarlos como una respuesta JSON
-        $tipos = Tipo::orderBy('nombre')->get();
-        return response()->json(['tipos' => $tipos]);
+        $this->middleware('auth:api')->only(['store', 'destroy']);
     }
+    public function index(Request $request)
+    {
+        // Recopila parámetros de consulta desde la solicitud
+        $perPage = $request->input('per_page', 40);
+        $page = $request->input('page', 1);
 
+        // Construye una consulta utilizando el Query Builder de Laravel
+        $query = DB::table('tipos as tip')
+            ->select('*')
+            ->orderBy('tip.nombre');
+
+        // Realiza una paginación de los resultados
+        $results = $query->paginate($perPage, ['*'], 'page', $page);
+
+        // Devuelve una respuesta JSON con los resultados paginados
+        return response()->json($results);
+    }
 
     public function store(Request $request)
     {
@@ -358,26 +366,19 @@ class TipoController extends Controller
         $validator = Validator::make($request->all(), [
             'nombre' => 'required|string|max:150|unique:tipos'
         ]);
-
+        
         if($validator->fails()){
-            return response()->json($validator->errors(),422);
+            return response()->json($validator->errors(),422); 
         }
 
-        //Debe estar configurado fillable en el modelo para
+        //Debe estar configurado fillable en el modelo para 
         //utilizar inserción masiva
         $tipo=Tipo::create($request->all());
-
+       
         // Retornar una respuesta JSON que confirma la creación exitosa del tipo.
         return response()->json(['message' => 'Tipo creado con éxito', 'tipo' => $tipo]);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * Método: show
-     * Ruta asociada: GET /tipos/{id}
-     * Descripción: Este método muestra un recurso (tipo) específico identificado por su ID.
-     */
     public function show(string $id)
     {
         // Buscar el tipo por su ID en la base de datos y retornarlo como una respuesta JSON.
@@ -391,47 +392,36 @@ class TipoController extends Controller
         return response()->json(['Tipo' => $tipo]);
     }
 
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * Método: update
-     * Ruta asociada: PUT/PATCH /itposs/{id}
-     * Descripción: Este método actualiza un recurso (tipo) específico identificado por su ID en el almacenamiento.
-     */
     public function update(Request $request, string $id)
-    {
-        // Validación de los datos actualizados del tipo.
-        $validator = Validator::make($request->all(),[
-            'nombre' => 'required|string|max:150|unique:tipos'
-        ]);
+{
+    // Validación de los datos actualizados del tipo.
+    $validator = Validator::make($request->all(), [
+        'nombre' => 'required|string|max:100',
+        'descripcion' => 'required|string',
+    ]);
 
-        if($validator->fails()){
-            return response()->json($validator->errors(),422);
-        }
-
-
-        // Buscar el tipo por su ID en la base de datos.
-        $tipo = Tipo::find($id);
-
-        if (!$tipo) {
-            return response()->json(['message' => 'tipo no encontrado'], 404);
-        }
-
-        // Actualizar los datos del tipo con los datos validados.
-        $tipo->update($request->all());
-
-        // Retornar una respuesta JSON que confirma la actualización exitosa del tipo.
-        return response()->json(['message' => 'Tipo actualizado con éxito', 'tipo' => $tipo]);
+    
+    if ($validator->fails()) {
+        return response()->json($validator->errors(), 422);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * Método: destroy
-     * Ruta asociada: DELETE /tipos/{id}
-     * Descripción: Este método elimina un recurso (tipo) específico identificado por su ID del almacenamiento.
-     */
+    // Buscar el tipo por su ID en la base de datos.
+    $tipo = Tipo::find($id);
+
+    if (!$tipo) {
+        return response()->json(['message' => 'tipo no encontrado'], 404);
+    }
+    
+    $tipo->nombre = $request->input('nombre');
+    $tipo->descripcion = $request->input('descripcion');
+    $tipo->save();
+    // Actualizar los datos del tipo con los datos validados.
+  //  $tipo->update($request->all());
+
+    // Retornar una respuesta JSON que confirma la actualización exitosa del tipo.
+    return response()->json(['message' => 'Tipo actualizado con éxito', 'tipo' => $tipo]);
+}
+
     public function destroy(string $id)
     {
         // Buscar el tipo por su ID en la base de datos.
@@ -471,32 +461,36 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Pais;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class PaisController extends Controller
 {
-       /**
-     * Display a listing of the resource.
-     *
-     * Método: index
-     * Ruta asociada: GET /paises
-     * Descripción: Este método muestra una lista de recursos (en este caso, paises).
-     */
-    public function index()
+
+    public function __construct()
     {
-        // Recuperar todos los paises desde la base de datos y retornarlos como una respuesta JSON
-        $paises = Pais::orderBy('nombre')->get();
-        return response()->json(['paises' => $paises]);
+        $this->middleware('auth:api')->only(['store', 'destroy', 'update']);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * Método: create
-     * Ruta asociada: POST /paises
-     * Descripción: Este método muestra el formulario para crear un nuevo recurso (pais).
-     */
 
+ public function index(Request $request)
+ {
+     // Recopila parámetros de consulta desde la solicitud
+     $perPage = $request->input('per_page', 20);
+     $page = $request->input('page', 1);
+ 
+     // Construye una consulta utilizando el Query Builder de Laravel
+     $query = DB::table('paises as p')
+         ->select('*')
+         ->orderBy('p.nombre');
+ 
+     // Realiza una paginación de los resultados
+     $results = $query->paginate($perPage, ['*'], 'page', $page);
+ 
+     // Devuelve una respuesta JSON con los resultados paginados
+     return response()->json($results);
+ }
+ 
     public function store(Request $request)
     {
         // Validación de los datos del nuevo pais (por ejemplo, nombre, código de pais).
@@ -504,25 +498,19 @@ class PaisController extends Controller
             'nombre' => 'required|string|max:255|unique:paises'
         ]);
 
-        if($validator->fails()){
-            return response()->json($validator->errors(),422);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
         }
 
-        //Debe estar configurado fillable en el modelo para
+        //Debe estar configurado fillable en el modelo para 
         //utilizar inserción masiva
-        $tipo=Pais::create($request->all());
+        $tipo = Pais::create($request->all());
 
         // Retornar una respuesta JSON que confirma la creación exitosa del pais.
         return response()->json(['message' => 'País creado con éxito', 'pais' => $tipo]);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * Método: show
-     * Ruta asociada: GET /paiss/{id}
-     * Descripción: Este método muestra un recurso (pais) específico identificado por su ID.
-     */
+
     public function show(string $id)
     {
         // Buscar el pais por su ID en la base de datos y retornarlo como una respuesta JSON.
@@ -536,22 +524,15 @@ class PaisController extends Controller
     }
 
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * Método: update
-     * Ruta asociada: PUT/PATCH /paises/{id}
-     * Descripción: Este método actualiza un recurso (pais) específico identificado por su ID en el almacenamiento.
-     */
     public function update(Request $request, string $id)
     {
         // Validación de los datos actualizados del tipo.
-        $validator = Validator::make($request->all(),[
+        $validator = Validator::make($request->all(), [
             'nombre' => 'required|string|max:255'
         ]);
 
-        if($validator->fails()){
-            return response()->json($validator->errors(),422);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
         }
 
 
@@ -569,13 +550,7 @@ class PaisController extends Controller
         return response()->json(['message' => 'País actualizado con éxito', 'pais' => $pais]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * Método: destroy
-     * Ruta asociada: DELETE /paises/{id}
-     * Descripción: Este método elimina un recurso (pais) específico identificado por su ID del almacenamiento.
-     */
+
     public function destroy(string $id)
     {
         // Buscar el pais por su ID en la base de datos.
@@ -586,15 +561,16 @@ class PaisController extends Controller
         }
 
         if ($pais->cervezas()->exists()) {
-            return response()->json(['message' => 'No se pudo borrar el país, tiene cervezas relacionadas'],400);
+            return response()->json(['message' => 'No se pudo borrar el país, tiene cervezas relacionadas'], 400);
         }
         // Eliminar el pais de la base de datos.
         $pais->delete();
 
         // Retornar una respuesta JSON que confirma la eliminación exitosa del tipo.
         return response()->json(['message' => 'País eliminado con éxito']);
-    }//
+    }
 }
+
 ```
 
 ### GraduacionController
@@ -737,6 +713,89 @@ class GraduacionController extends Controller
         return response()->json(['message' => 'Graduación eliminado con éxito']);
     }
 }
+```
+
+### SystemController
+
+Para crear el controlador teclee el siguiente comando en su terminal:
+
+```bash
+php artisan make:controller Api/V1/SystemController
+```
+
+Diríjase al controlador creado, editelo y copie el siguiente código:
+
+```js
+<?php
+
+namespace App\Http\Controllers\Api\V1;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
+
+class SystemController extends Controller
+{
+    public function consultaCervezasPorPais()
+    {
+        $resultados = DB::select("
+            SELECT COUNT(*) as value, p.nombre as name
+            FROM cervezas as cer
+            INNER JOIN paises AS p ON cer.pais_id = p.id
+            GROUP BY cer.pais_id, p.nombre
+            ORDER BY p.nombre
+        ");
+
+        return response()->json($resultados);
+    }
+
+  
+    public function consultaCervezasPorTipo()
+    {
+        $resultados = DB::select("
+            SELECT COUNT(*) as value, t.nombre as name
+            FROM cervezas as cer
+            INNER JOIN tipos AS t ON cer.tipo_id = t.id
+            GROUP BY cer.tipo_id, t.nombre
+            ORDER BY t.nombre
+        ");
+
+        return response()->json($resultados);
+    }
+
+ 
+    public function consultaBD()
+    {
+        $databaseName = env('DB_DATABASE');
+        $resultados = DB::select("
+            SELECT 
+            table_name,
+            table_rows,
+            data_length / (1024 * 1024) AS data_size_mb,
+            index_length / (1024 * 1024) AS index_size_mb
+            FROM information_schema.tables
+            WHERE table_schema = '{$databaseName}'
+            AND table_type = 'BASE TABLE'; -- Solo tablas, no vistas ni tablas de sistema;
+        ");
+
+        return response()->json($resultados);
+    }
+
+ 
+    public function consultaTablas()
+    {
+        $databaseName = env('DB_DATABASE');
+    
+        $resultados = DB::select("
+            SELECT table_name, table_rows
+            FROM information_schema.tables
+            WHERE table_schema = '{$databaseName}'
+              AND table_type = 'BASE TABLE'; -- Solo tablas, no vistas ni tablas de sistema
+        ");
+    
+        return response()->json($resultados);
+    }
+    
+};
 ```
 
 ## Transacciones y subida de archivos
