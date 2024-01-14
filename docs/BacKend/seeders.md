@@ -127,6 +127,8 @@ A continuación aplicaremos la misma lógica para el resto de seeders
 
 namespace Database\Seeders;
 
+use App\Models\Tipo;
+use \Illuminate\Support\Facades\File;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -138,47 +140,84 @@ class TiposSeeder extends Seeder
      */
     public function run(): void
     {
-        $data = [
-            ["nombre" => "Ale"],
-            ["nombre" => "Lager/Pilsner"],
-            ["nombre" => "Stout"],
-            ["nombre" => "Porter"],
-            ["nombre" => "IPA (India Pale Ale)"],
-            ["nombre" => "Wheat Beer"],
-            ["nombre" => "Sour Beer"],
-            ["nombre" => "Belgian Ale"],
-            ["nombre" => "Pale Ale"],
-            ["nombre" => "Brown Ale"],
-            ["nombre" => "Amber Ale"],
-            ["nombre" => "Golden Ale"],
-            ["nombre" => "Blonde Ale"],
-            ["nombre" => "Cream Ale"],
-            ["nombre" => "Kölsch"],
-            ["nombre" => "Pilsner"],
-            ["nombre" => "Bock"],
-            ["nombre" => "Doppelbock"],
-            ["nombre" => "Helles"],
-            ["nombre" => "Vienna Lager"],
-            ["nombre" => "Marzen/Oktoberfest"],
-            ["nombre" => "Kellerbier"],
-            ["nombre" => "Dunkel"],
-            ["nombre" => "Schwarzbier"],
-            ["nombre" => "Barleywine"],
-            ["nombre" => "Saison"],
-            ["nombre" => "Witbier"],
-            ["nombre" => "Gose"],
-            ["nombre" => "Kvass"],
-            ["nombre" => "Rauchbier"],
-            ["nombre" => "Fruit Beer"],
-            ["nombre" => "Cider"],
-            ["nombre" => "Mead"],
-        ];
+        DB::table('tipos')->delete();
+        $json = File::get("database/seeders/data/tipos.json");
+        $data = json_decode($json);
+        foreach ($data as $obj) {
+            Tipo::create(array(
+                'nombre' => $obj->nombre,
+                'descripcion' => $obj->descripcion,
+            ));
         
-        DB::table('tipos')->insert($data);
+        }
     }
 }
-
 ```
+:::info Explicación del código
+Este seeder de Laravel está diseñado para poblar la base de datos con información de tipos de cerveza a partir de un archivo JSON. Aquí hay una explicación paso a paso de lo que hace:
+
+1. **Namespace y Uso de Clases:**
+   ```php
+   namespace Database\Seeders;
+   
+   use App\Models\Tipo;
+   use \Illuminate\Support\Facades\File;
+   use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+   use Illuminate\Database\Seeder;
+   use Illuminate\Support\Facades\DB;
+   ```
+
+   - El seeder está en el namespace `Database\Seeders`.
+   - Utiliza el modelo `Tipo` ubicado en el espacio de nombres `App\Models`.
+   - Hace uso de la clase `File` del espacio de nombres `Illuminate\Support\Facades` para trabajar con archivos.
+   - Extiende la clase base `Seeder` de Laravel.
+
+2. **Clase `TiposSeeder`:**
+   ```php
+   class TiposSeeder extends Seeder
+   {
+   ```
+
+   - La clase se llama `TiposSeeder` y extiende la clase base `Seeder`.
+
+3. **Método `run()`:**
+   ```php
+   public function run(): void
+   {
+   ```
+
+   - Este método es llamado cuando se ejecuta el seeder. Contiene la lógica principal para poblar la base de datos.
+
+4. **Eliminar Registros Existente:**
+   ```php
+   DB::table('tipos')->delete();
+   ```
+   - Elimina todos los registros existentes en la tabla `tipos`. Esto asegura que la tabla esté vacía antes de insertar nuevos datos.
+
+5. **Obtener Datos del Archivo JSON:**
+   ```php
+   $json = File::get("database/seeders/data/tipos.json");
+   $data = json_decode($json);
+   ```
+   - Lee el contenido del archivo JSON ubicado en `database/seeders/data/tipos.json`.
+   - Convierte el JSON en un objeto PHP usando `json_decode`.
+
+6. **Iterar y Crear Registros:**
+   ```php
+   foreach ($data as $obj) {
+       Tipo::create(array(
+           'nombre' => $obj->nombre,
+           'descripcion' => $obj->descripcion,
+       ));
+   }
+   ```
+   - Itera sobre cada objeto en los datos obtenidos del JSON.
+   - Para cada objeto, crea un nuevo registro en la tabla `tipos` utilizando el modelo `Tipo`.
+   - Asigna los valores de 'nombre' y 'descripcion' desde el objeto JSON.
+
+En resumen, este seeder se encarga de vaciar la tabla `tipos` y luego llenarla con datos obtenidos de un archivo JSON que contiene información sobre tipos de cerveza, utilizando el modelo `Tipo`. Este proceso es comúnmente utilizado en el desarrollo para tener datos de prueba o iniciales en la base de datos.
+:::
+
 ### PaisesSeeder
 
 ```js

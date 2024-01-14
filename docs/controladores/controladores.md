@@ -337,11 +337,12 @@ use Illuminate\Support\Facades\Validator;
 
 class TipoController extends Controller
 {
-    
+    //Introducir solo si esta instalado JWT
     public function __construct()
     {
         $this->middleware('auth:api')->only(['store', 'destroy']);
     }
+
     public function index(Request $request)
     {
         // Recopila parámetros de consulta desde la solicitud
@@ -415,10 +416,7 @@ class TipoController extends Controller
     $tipo->nombre = $request->input('nombre');
     $tipo->descripcion = $request->input('descripcion');
     $tipo->save();
-    // Actualizar los datos del tipo con los datos validados.
-  //  $tipo->update($request->all());
-
-    // Retornar una respuesta JSON que confirma la actualización exitosa del tipo.
+    
     return response()->json(['message' => 'Tipo actualizado con éxito', 'tipo' => $tipo]);
 }
 
@@ -442,7 +440,172 @@ class TipoController extends Controller
     }
 }
 ```
+:::info Explicación del código
+Este controlador en Laravel, denominado `TipoController`, maneja las operaciones CRUD (Crear, Leer, Actualizar, Eliminar) para el modelo `Tipo` en una API. Aquí hay una explicación paso a paso de sus métodos:
 
+1. **Namespace y Uso de Clases:**
+   ```js
+   namespace App\Http\Controllers\Api\V1;
+
+   use App\Http\Controllers\Controller;
+   use Illuminate\Http\Request;
+   use App\Models\Tipo;
+   use Illuminate\Support\Facades\DB;
+   use Illuminate\Support\Facades\Validator;
+   ```
+
+   - El controlador está en el namespace `App\Http\Controllers\Api\V1`.
+   - Extiende la clase base `Controller` de Laravel.
+   - Utiliza el modelo `Tipo` y clases adicionales para manejar validación y consultas de base de datos.
+
+2. **Constructor y Middleware:**
+   ```js
+   //Solo si esta configurado JWT
+   public function __construct()
+   {
+       $this->middleware('auth:api')->only(['store', 'destroy']);
+   }
+   ```
+
+   - El constructor establece un middleware para autenticación en los métodos `store` y `destroy`. Esto significa que se requiere autenticación API para realizar estas operaciones. Utilizar solo si esta configurado JWT, el cual veremos en un próximo capitulo
+
+3. **Método `index`:**
+   ```js
+   public function index(Request $request)
+   {
+       // Recopila parámetros de consulta desde la solicitud
+       $perPage = $request->input('per_page', 40);
+       $page = $request->input('page', 1);
+
+       // Construye una consulta utilizando el Query Builder de Laravel
+       $query = DB::table('tipos as tip')
+           ->select('*')
+           ->orderBy('tip.nombre');
+
+       // Realiza una paginación de los resultados
+       $results = $query->paginate($perPage, ['*'], 'page', $page);
+
+       // Devuelve una respuesta JSON con los resultados paginados
+       return response()->json($results);
+   }
+   ```
+
+   - Este método maneja la obtención paginada de todos los tipos.
+   - Lee parámetros de consulta para paginación.
+   - Utiliza el Query Builder para construir la consulta y la ordena por el nombre.
+   - Retorna los resultados paginados como respuesta JSON.
+
+4. **Método `store`:**
+   ```js
+   public function store(Request $request)
+   {
+       // Validación de los datos del nuevo tipo (por ejemplo, nombre, código de tipo).
+       $validator = Validator::make($request->all(), [
+           'nombre' => 'required|string|max:150|unique:tipos'
+       ]);
+       
+       if($validator->fails()){
+           return response()->json($validator->errors(), 422); 
+       }
+
+       // Debe estar configurado fillable en el modelo para 
+       // utilizar inserción masiva
+       $tipo = Tipo::create($request->all());
+      
+       // Retornar una respuesta JSON que confirma la creación exitosa del tipo.
+       return response()->json(['message' => 'Tipo creado con éxito', 'tipo' => $tipo]);
+   }
+   ```
+
+   - Este método maneja la creación de un nuevo tipo.
+   - Realiza validación utilizando el componente Validator de Laravel.
+   - Crea un nuevo tipo utilizando inserción masiva si la validación es exitosa.
+   - Retorna una respuesta JSON indicando el éxito y el nuevo tipo creado.
+
+5. **Método `show`:**
+   ```js
+   public function show(string $id)
+   {
+       // Buscar el tipo por su ID en la base de datos y retornarlo como una respuesta JSON.
+       $tipo = Tipo::find($id);
+
+       if (!$tipo) {
+           return response()->json(['message' => 'Tipo no encontrado'], 404);
+       }
+
+       return response()->json(['Tipo' => $tipo]);
+   }
+   ```
+
+   - Maneja la obtención de un tipo por su ID.
+   - Retorna una respuesta JSON con el tipo si es encontrado, de lo contrario, devuelve un mensaje de error.
+
+6. **Método `update`:**
+   ```js
+   public function update(Request $request, string $id)
+   {
+       // Validación de los datos actualizados del tipo.
+       $validator = Validator::make($request->all(), [
+           'nombre' => 'required|string|max:100',
+           'descripcion' => 'required|string',
+       ]);
+
+       if ($validator->fails()) {
+           return response()->json($validator->errors(), 422);
+       }
+
+       // Buscar el tipo por su ID en la base de datos.
+       $tipo = Tipo::find($id);
+
+       if (!$tipo) {
+           return response()->json(['message' => 'Tipo no encontrado'], 404);
+       }
+       
+       $tipo->nombre = $request->input('nombre');
+       $tipo->descripcion = $request->input('descripcion');
+       $tipo->save();
+
+       // Actualizar los datos del tipo con los datos validados.
+       // $tipo->update($request->all());
+
+       // Retornar una respuesta JSON que confirma la actualización exitosa del tipo.
+       return response()->json(['message' => 'Tipo actualizado con éxito', 'tipo' => $tipo]);
+   }
+   ```
+
+   - Maneja la actualización de un tipo por su ID.
+   - Realiza validación utilizando el componente Validator de Laravel.
+   - Busca el tipo en la base de datos y actualiza sus atributos si es encontrado.
+   - Retorna una respuesta JSON indicando el éxito y el tipo actualizado.
+
+7. **Método `destroy`:**
+   ```php
+   public function destroy(string $id)
+   {
+       // Buscar el tipo por su ID en la base de datos.
+       $tipo = Tipo::find($id);
+
+       if (!$tipo) {
+           return response()->json(['message' => 'Tipo no encontrado'], 404);
+       }
+
+       if ($tipo->cervezas()->exists()) {
+           return response()->json(['message' => 'No se pudo borrar el tipo, tiene cervezas relacionadas'], 400);
+       }
+       // Eliminar el tipo de la base de datos.
+       $tipo->delete();
+
+       // Retornar una respuesta JSON que confirma la eliminación exitosa del tipo.
+       return response()->json(['message' => 'Tipo elimin
+
+ado con éxito']);
+   }
+   ```
+
+   - Maneja la eliminación de un tipo por su ID.
+   - Verifica si existen cervezas relacionadas antes de intentar la eliminación.
+   - Elimina el tipo de la base de datos si es encontrado.
+   - Retorna una respuesta JSON indicando el éxito y el mensaje de eliminación.
 ### PaisController
 
 Para crear el controlador teclee el siguiente comando en su terminal:
@@ -1493,3 +1656,181 @@ return response()->json($cerveza, 201);
 }
 ```
 Si todo el proceso se ha completado sin problemas, devuelve una respuesta JSON con la cerveza recién creada y un código de estado 201. En caso de algún error durante el proceso, revierte la transacción y devuelve una respuesta de error con un código de estado 500.
+
+### SystemController
+
+En este controlador exploraremos como devolver consultas para elaborar estadísticas de nuestra base de datos y del sistema.
+
+Para crear el controlador teclee el siguiente comando en su terminal:
+
+```bash
+php artisan make:controller Api/V1/SystmController
+```
+
+Diríjase a la carpeta **App\Http\Controllers\Api\V1** y edite el archivo TipoController.
+
+Seguidamente comentaremos paso a paso los para crear el controlador:
+
+1. De momento teclee el siguiente código
+
+```js
+<?php
+
+namespace App\Http\Controllers\Api\V1;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
+
+class SystemController extends Controller
+{
+    public function consultaCervezasPorPais()
+    {
+        $resultados = DB::select("
+            SELECT COUNT(*) as value, p.nombre as name
+            FROM cervezas as cer
+            INNER JOIN paises AS p ON cer.pais_id = p.id
+            GROUP BY cer.pais_id, p.nombre
+            ORDER BY p.nombre
+        ");
+
+        return response()->json($resultados);
+    }
+
+    public function consultaCervezasPorTipo()
+    {
+        $resultados = DB::select("
+            SELECT COUNT(*) as value, t.nombre as name
+            FROM cervezas as cer
+            INNER JOIN tipos AS t ON cer.tipo_id = t.id
+            GROUP BY cer.tipo_id, t.nombre
+            ORDER BY t.nombre
+        ");
+
+        return response()->json($resultados);
+    }
+
+    public function consultaBD()
+    {
+        $databaseName = env('DB_DATABASE');
+        $resultados = DB::select("
+            SELECT 
+            table_name,
+            table_rows,
+            data_length / (1024 * 1024) AS data_size_mb,
+            index_length / (1024 * 1024) AS index_size_mb
+            FROM information_schema.tables
+            WHERE table_schema = '{$databaseName}'
+            AND table_type = 'BASE TABLE'; -- Solo tablas, no vistas ni tablas de sistema;
+        ");
+
+        return response()->json($resultados);
+    }
+
+    public function consultaTablas()
+    {
+        $databaseName = env('DB_DATABASE');
+    
+        $resultados = DB::select("
+            SELECT table_name, table_rows
+            FROM information_schema.tables
+            WHERE table_schema = '{$databaseName}'
+              AND table_type = 'BASE TABLE'; -- Solo tablas, no vistas ni tablas de sistema
+        ");
+    
+        return response()->json($resultados);
+    }
+    
+};
+```
+
+:::info Explicación del código
+Este controlador , llamado `SystemController`, esta diseñado para realizar consultas específicas relacionadas con el sistema, como obtener información sobre cervezas por país, por tipo, detalles sobre la base de datos y la lista de tablas. A continuación, se proporciona una explicación para cada método:
+
+1. **`consultaCervezasPorPais`**
+   ```php
+   public function consultaCervezasPorPais()
+   {
+       $resultados = DB::select("
+           SELECT COUNT(*) as value, p.nombre as name
+           FROM cervezas as cer
+           INNER JOIN paises AS p ON cer.pais_id = p.id
+           GROUP BY cer.pais_id, p.nombre
+           ORDER BY p.nombre
+       ");
+
+       return response()->json($resultados);
+   }
+   ```
+
+   - Este método realiza una consulta para contar la cantidad de cervezas agrupadas por país.
+   - Utiliza el Query Builder para construir la consulta SQL, que incluye una unión interna (`INNER JOIN`) entre las tablas `cervezas` y `paises` mediante las claves foráneas `cer.pais_id` y `p.id`.
+   - El resultado es un conjunto de datos que incluye el nombre del país (`name`) y la cantidad de cervezas (`value`) asociadas a ese país.
+   - Retorna los resultados en formato JSON.
+
+2. **`consultaCervezasPorTipo`**
+   ```php
+   public function consultaCervezasPorTipo()
+   {
+       $resultados = DB::select("
+           SELECT COUNT(*) as value, t.nombre as name
+           FROM cervezas as cer
+           INNER JOIN tipos AS t ON cer.tipo_id = t.id
+           GROUP BY cer.tipo_id, t.nombre
+           ORDER BY t.nombre
+       ");
+
+       return response()->json($resultados);
+   }
+   ```
+
+   - Similar al método anterior, este realiza una consulta para contar la cantidad de cervezas agrupadas por tipo.
+   - Utiliza un `INNER JOIN` entre las tablas `cervezas` y `tipos` utilizando las claves foráneas `cer.tipo_id` y `t.id`.
+   - El resultado incluye el nombre del tipo (`name`) y la cantidad de cervezas (`value`) asociadas a ese tipo.
+   - Retorna los resultados en formato JSON.
+
+3. **`consultaBD`**
+   ```php
+   public function consultaBD()
+   {
+       $databaseName = env('DB_DATABASE');
+       $resultados = DB::select("
+           SELECT 
+           table_name,
+           table_rows,
+           data_length / (1024 * 1024) AS data_size_mb,
+           index_length / (1024 * 1024) AS index_size_mb
+           FROM information_schema.tables
+           WHERE table_schema = '{$databaseName}'
+           AND table_type = 'BASE TABLE'; -- Solo tablas, no vistas ni tablas de sistema;
+       ");
+
+       return response()->json($resultados);
+   }
+   ```
+
+   - Este método realiza una consulta para obtener información sobre las tablas de la base de datos.
+   - Utiliza la tabla `information_schema.tables` para obtener detalles como el nombre de la tabla (`table_name`), el número de filas (`table_rows`), el tamaño de datos en megabytes (`data_size_mb`), y el tamaño del índice en megabytes (`index_size_mb`).
+   - Filtra las tablas basándose en el nombre de la base de datos actual.
+   - Retorna los resultados en formato JSON.
+
+4. **`consultaTablas`**
+   ```php
+   public function consultaTablas()
+   {
+       $databaseName = env('DB_DATABASE');
+   
+       $resultados = DB::select("
+           SELECT table_name, table_rows
+           FROM information_schema.tables
+           WHERE table_schema = '{$databaseName}'
+             AND table_type = 'BASE TABLE'; -- Solo tablas, no vistas ni tablas de sistema
+       ");
+   
+       return response()->json($resultados);
+   }
+   ```
+
+   - Similar al método anterior, este realiza una consulta para obtener información sobre las tablas de la base de datos.
+   - Retorna los nombres de las tablas (`table_name`) y el número de filas (`table_rows`) en formato JSON.
+   - Filtra las tablas basándose en el nombre de la base de datos actual.
+:::

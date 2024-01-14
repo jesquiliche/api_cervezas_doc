@@ -88,6 +88,7 @@ return new class extends Migration
     {
         Schema::create('colores', function (Blueprint $table) {
             $table->id();
+            $table->text('descripcion')->nullable();
             $table->timestamps();
         });
     }
@@ -228,6 +229,7 @@ return new class extends Migration
         Schema::create('tipos', function (Blueprint $table) {
             $table->id();
             $table->string(`nombre`,100)->unique();
+            $table->text('descripcion')->nullable();
             $table->timestamps();
         });
     }
@@ -271,6 +273,7 @@ return new class extends Migration
         Schema::create('paises', function (Blueprint $table) {
             $table->id();
             $table->string("nombre")->unique();
+            $table->text('descripcion')->nullable();
             $table->timestamp();
         });
     }
@@ -316,6 +319,7 @@ return new class extends Migration
         Schema::create('graduaciones', function (Blueprint $table) {
             $table->id();
             $table->string("nombre",50)->unique();
+            $table->text('descripcion')->nullable();
             $table->timestamp();
         });
     }
