@@ -606,6 +606,8 @@ ado con éxito']);
    - Verifica si existen cervezas relacionadas antes de intentar la eliminación.
    - Elimina el tipo de la base de datos si es encontrado.
    - Retorna una respuesta JSON indicando el éxito y el mensaje de eliminación.
+:::
+
 ### PaisController
 
 Para crear el controlador teclee el siguiente comando en su terminal:
@@ -878,6 +880,77 @@ class GraduacionController extends Controller
 }
 ```
 
+### ProvinciaController
+
+Para crear el controlador teclee el siguiente comando en su terminal:
+
+```bash
+php artisan make:controller Api/V1/ProvinciaController
+```
+
+Diríjase al controlador creado, editelo y copie el siguiente código:
+
+```js
+<?php
+
+namespace App\Http\Controllers\Api\V1;
+
+use App\Http\Controllers\Controller;
+use App\Models\Provincia;
+use Illuminate\Http\Request;
+
+class ProvinciaController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+
+    public function index()
+    {
+        // Recupera todas las provincias desde la base de datos y las devuelve como una respuesta JSON ordenadas por nombre
+        return Provincia::orderBy('nombre')->get();
+    }
+
+    
+}
+```
+
+### PoblacionController
+
+Para crear el controlador teclee el siguiente comando en su terminal:
+
+```bash
+php artisan make:controller Api/V1/PoblacionController
+```
+
+Diríjase al controlador creado, editelo y copie el siguiente código:
+
+```js
+<?php
+
+namespace App\Http\Controllers\Api\V1;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Models\Poblacion;
+
+class PoblacionController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index(Request $request)
+    {
+        $provincia = $request->input('provincia', ''); // Valor predeterminado es una cadena vacía
+
+        return Poblacion::where('provincia_cod', $provincia)->orderBy('nombre')->get();
+    }
+}
+```
 ### SystemController
 
 Para crear el controlador teclee el siguiente comando en su terminal:

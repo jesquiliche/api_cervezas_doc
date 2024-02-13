@@ -29,12 +29,18 @@ Route::apiResource('v1/colores', App\Http\Controllers\Api\V1\ColorController::cl
 Route::apiResource('v1/paises', App\Http\Controllers\Api\V1\PaisController::class);
 Route::apiResource('v1/tipos', App\Http\Controllers\Api\V1\TipoController::class);
 Route::apiResource('v1/graduaciones', App\Http\Controllers\Api\V1\GraduacionController::class);
+Route::apiResource('v1/poblaciones', App\Http\Controllers\Api\V1\PoblacionController::class);
+Route::apiResource('v1/provincias', App\Http\Controllers\Api\V1\ProvinciaController::class);
 
 Route::get('v1/cervezas',[App\Http\Controllers\Api\V1\CervezaController::class,'index']);
 Route::get('v1/cervezas/{id}',[App\Http\Controllers\Api\V1\CervezaController::class,'show']);
 Route::get('v1/consultaCervezasPorPais',[App\Http\Controllers\Api\V1\SystemController::class,'consultaCervezasPorPais']);
 Route::get('v1/consultaCervezasPorTipo',[App\Http\Controllers\Api\V1\SystemController::class,'consultaCervezasPorTipo']);
+Route::get('v1/consultaCervezasPorColores',[App\Http\Controllers\Api\V1\SystemController::class,'consultaCervezasColores']);
+Route::get('v1/consultaCervezasPorGraduaciones',[App\Http\Controllers\Api\V1\SystemController::class,'consultaCervezasGraduaciones']);
+Route::get('v1/stockPorPais',[App\Http\Controllers\Api\V1\SystemController::class,'stockPorPais']);
 Route::get('v1/consultaTablas',[App\Http\Controllers\Api\V1\SystemController::class,'consultaTablas']);
+Route::get('v1/consultaTablas2',[App\Http\Controllers\Api\V1\SystemController::class,'consultaTablas2']);
 Route::get('v1/consultaBD',[App\Http\Controllers\Api\V1\SystemController::class,'consultaBD']);
 
 Route::put('v1/cervezas/{id}',[App\Http\Controllers\Api\V1\CervezaController::class,'update']);
